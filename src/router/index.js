@@ -10,25 +10,16 @@ const routes = [
   {
     path: '/calendar',
     name: 'calendar',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
     component: calendar
   },
   {
     path: '/cal',
     name: 'cal',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
     component: cal
   },
   {
     path: '/test',
     name: 'test',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
     component: test
   }
 ]

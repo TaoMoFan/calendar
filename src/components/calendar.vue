@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-card height="100%">
+    <v-card>
 <!--      标题栏-->
       <v-card-title class="px-1">
           <v-btn
@@ -12,257 +12,317 @@
               mdi-account-circle
             </v-icon>
           </v-btn>
-<!--        <v-app-bar-nav-icon @click="drawer = true"></v-app-bar-nav-icon>-->
-        <v-spacer></v-spacer>
-        <v-responsive class="ml-auto"  max-width="15%">
-          <v-text-field
+<!--          左侧弹窗遮罩-->
+        <v-navigation-drawer
+            v-model="drawer"
+            absolute
+            temporary
+            width="20%"
+        >
+          <v-list
+              nav
               dense
-              flat
-              hide-details
-              rounded
-              solo-inverted
-          ></v-text-field>
-        </v-responsive>
-      </v-card-title>
-      <v-card-text>
-        <v-row class="fill-height">
-          <v-col cols="4" style="padding: 0px">
-            <v-sheet class="overflow-hidden" height="90%">
-              <v-app-bar
-                  height="50px"
-                  scroll-target="#scrolling-techniques-2"
-              >
-                <!--            <template v-slot:img="{ props }">-->
-                <!--              <v-img-->
-                <!--                  v-bind="props"-->
-                <!--                  gradient="to top right, rgba(19,84,122,.5), rgba(128,208,199,.8)"-->
-                <!--              ></v-img>-->
-                <!--            </template>-->
+          >
+            <v-list-item-group
+                v-model="group"
+                active-class="deep-purple--text text--accent-4"
+            >
+              <v-list-item>
+                <v-list-item-icon>
+                  <v-icon>mdi-home</v-icon>
+                </v-list-item-icon>
+                <v-list-item-title>Home</v-list-item-title>
+              </v-list-item>
 
-
-                <v-app-bar-title>Title</v-app-bar-title>
-                <v-spacer></v-spacer>
-                <v-btn icon>
-                  <v-icon>mdi-magnify</v-icon>
-                </v-btn>
-                <v-btn icon>
-                  <v-icon>mdi-heart</v-icon>
-                </v-btn>
-                <v-btn
-                    @click="ifcalendar = !ifcalendar"
-                    icon>
-                  <v-icon
-                      color="teal darken-2"
-                  >
-                    mdi-email
-                  </v-icon>
-                </v-btn>
-                <v-btn icon>
-                  <v-icon>mdi-dots-vertical</v-icon>
-                </v-btn>
-                <template v-if="ifcalendar" v-slot:extension>
-                  <v-tabs v-model="tab" align-with-title>
-                    <v-tab style="margin-left: 0px" key="1">
-                      今天
-                    </v-tab>
-                    <v-tab key="2">本周</v-tab>
-                    <v-tab key="3">本月</v-tab>
-                  </v-tabs>
-                </template>
-              </v-app-bar>
-              <!--          左侧弹窗遮罩-->
-              <v-navigation-drawer
-                  v-model="drawer"
-                  absolute
-                  temporary
-              >
-                <v-list
-                    nav
-                    dense
+              <v-list-item>
+                <v-list-item-icon>
+                  <v-icon>mdi-account</v-icon>
+                </v-list-item-icon>
+                <v-list-item-title>Account</v-list-item-title>
+              </v-list-item>
+            </v-list-item-group>
+          </v-list>
+        </v-navigation-drawer>
+        <v-spacer></v-spacer>
+        <v-btn
+            outlined
+            class="mr-3 unselected"
+            :class="{selected: type === 'day'}"
+            @click="setToday"
+            :elevation="type === 'day' ? 0 : 3"
+        >
+          今天
+        </v-btn>
+        <v-btn
+            class="mr-3 unselected"
+            :class="{selected: type ==='week'}"
+            outlined
+            @click="type = 'week'"
+            :elevation="type === 'week' ? 0 : 3"
+        >
+          本周
+        </v-btn>
+        <v-btn
+            class="mr-3 unselected"
+            :class="{selected: type === 'month'}"
+            outlined
+            @click="type = 'month'"
+            :elevation="type === 'month' ? 0 : 3"
+        >
+          本月
+        </v-btn>
+        <v-spacer></v-spacer>
+        <v-responsive  class="d-flex align-center"  max-width="15%">
+          <v-text-field
+              v-model="newSearch"
+              label="搜索"
+              solo
+              @keydown.enter="create"
+          >
+            <template v-slot:append>
+              <v-fade-transition>
+                <v-icon
+                    v-if="newSearch"
+                    @click="Search"
                 >
-                  <v-list-item-group
-                      v-model="group"
-                      active-class="deep-purple--text text--accent-4"
-                  >
-                    <v-list-item>
-                      <v-list-item-icon>
-                        <v-icon>mdi-home</v-icon>
-                      </v-list-item-icon>
-                      <v-list-item-title>Home</v-list-item-title>
-                    </v-list-item>
+                  mdi-magnify
+                </v-icon>
+              </v-fade-transition>
+            </template>
+          </v-text-field>
+        </v-responsive>
 
-                    <v-list-item>
-                      <v-list-item-icon>
-                        <v-icon>mdi-account</v-icon>
-                      </v-list-item-icon>
-                      <v-list-item-title>Account</v-list-item-title>
-                    </v-list-item>
-                  </v-list-item-group>
-                </v-list>
-              </v-navigation-drawer>
+      </v-card-title>
+<!--      内容-->
+        <v-row>
+<!--          待办-->
+          <v-col cols="4" class="pr-0 pt-0">
+            <v-sheet class="overflow-hidden">
+              <v-tabs
+                  fixed-tabs
+                  v-model="tab"
+                  color="green"
+
+
+              >
+                <v-tab key="1" style="min-width: 5%">
+                  <v-icon color="orange darken-2">mdi-arrow-up-bold-box-outline</v-icon>
+                </v-tab>
+                <v-tab key="2" style="min-width: 5%">
+                  <v-icon>mdi-heart</v-icon>
+                </v-tab>
+                <v-tab key="3" style="min-width: 5%">
+                  <v-icon>mdi-account-box</v-icon>
+                </v-tab>
+                <v-tab key="4" style="min-width: 5%">
+                  <v-icon color="teal darken-2">mdi-email</v-icon>
+                </v-tab>
+                <v-tab key="5" style="min-width: 5%">
+                  <v-icon color="blue-grey darken-2">mdi-call-split</v-icon>
+                </v-tab>
+                <v-tab key="6" style="min-width: 5%">
+                <v-icon color="blue-grey darken-2">mdi-call-split</v-icon>
+              </v-tab>
+              </v-tabs>
 
               <v-tabs-items v-model="tab">
                 <v-tab-item key="1">
-                  1
+                  <v-container style="max-width: 500px">
+                    <v-text-field
+                        v-model="newTask"
+                        label="新建待办事项"
+                        solo
+                        @keydown.enter="create"
+                    >
+                      <template v-slot:append>
+                        <v-fade-transition>
+                          <v-icon
+                              v-if="newTask"
+                              @click="create"
+                          >
+                            mdi-plus-circle
+                          </v-icon>
+                        </v-fade-transition>
+                      </template>
+                    </v-text-field>
+
+                    <h2 class="text-h4 success--text pl-4">
+                      总计:&nbsp;
+                      <v-fade-transition leave-absolute>
+                        <span :key="`tasks-${tasks.length}`">
+                          {{ tasks.length }}
+                        </span>
+                      </v-fade-transition>
+                    </h2>
+                    <v-divider class="mt-4"></v-divider>
+                    <v-row
+                        class="my-1"
+                        align="center"
+                    >
+                      <strong class="mx-4 info--text text--darken-2">
+                        剩余待办: {{ remainingTasks }}
+                      </strong>
+
+                      <v-divider vertical></v-divider>
+
+                      <strong class="mx-4 success--text text--darken-2">
+                        已完成: {{ completedTasks }}
+                      </strong>
+
+                      <v-spacer></v-spacer>
+
+                      <v-progress-circular
+                          :value="progress"
+                          class="mr-2"
+                      ></v-progress-circular>
+                    </v-row>
+
+                    <v-divider class="mb-4"></v-divider>
+
+                    <v-card v-if="tasks.length > 0">
+                      <v-slide-y-transition
+                          class="py-0"
+                          group
+                          tag="v-list"
+                      >
+                        <template v-for="(task, i) in tasks">
+                          <v-divider
+                              v-if="i !== 0"
+                              :key="`${i}-divider`"
+                          ></v-divider>
+
+                          <v-list-item :key="`${i}-${task.text}`">
+                            <v-list-item-action>
+                              <v-checkbox
+                                  v-model="task.done"
+                                  :color="task.done && 'grey' || 'primary'"
+                              >
+                                <template v-slot:label>
+                                  <div
+                                      :class="task.done && 'grey--text' || 'primary--text'"
+                                      class="ml-4"
+                                      v-text="task.text"
+                                  ></div>
+                                </template>
+                              </v-checkbox>
+                            </v-list-item-action>
+
+                            <v-spacer></v-spacer>
+
+                            <v-scroll-x-transition>
+                              <v-icon
+                                  v-if="task.done"
+                                  color="success"
+                              >
+                                mdi-check
+                              </v-icon>
+                            </v-scroll-x-transition>
+                          </v-list-item>
+                        </template>
+                      </v-slide-y-transition>
+                    </v-card>
+                  </v-container>
                 </v-tab-item>
-                <v-tab-item key="2">2</v-tab-item>
+                <v-tab-item key="2">
+                </v-tab-item>
                 <v-tab-item key="3">3</v-tab-item>
+                <v-tab-item key="4">2</v-tab-item>
+                <v-tab-item key="5">3</v-tab-item>
               </v-tabs-items>
-              <!--          任务列表-->
-              <!--          <v-sheet-->
-              <!--              id="scrolling-techniques-2"-->
-              <!--              class="overflow-y-auto"-->
-              <!--              max-height="90%"-->
-              <!--          >-->
-              <!--            <v-container style="height: 100%;background-color: #725124">123</v-container>-->
-              <!--          </v-sheet>-->
             </v-sheet>
           </v-col>
-
-
-          <v-col cols="20" style="padding: 0px" v-if="ifcalendar">
-            <v-sheet class="overflow-hidden" height="90%">
-              <v-toolbar
-                  height="50px"
-                  flat
+          <!--          //日历-->
+          <v-col class="pl-0 pt-0">
+            <v-toolbar
+                flat
+            >
+              <v-btn
+                  fab
+                  text
+                  small
+                  color="grey darken-2"
+                  @click="prev"
               >
-                <v-btn
-                    outlined
-                    class="mr-2"
-                    color="grey darken-2"
-                    @click="setToday"
+                <v-icon small>
+                  mdi-chevron-left
+                </v-icon>
+              </v-btn>
+              <v-btn
+                  fab
+                  text
+                  small
+                  color="grey darken-2"
+                  @click="next"
+              >
+                <v-icon small>
+                  mdi-chevron-right
+                </v-icon>
+              </v-btn>
+              <v-toolbar-title v-if="$refs.calendar">
+                {{ $refs.calendar.title }}
+              </v-toolbar-title>
+              <v-spacer></v-spacer>
+            </v-toolbar>
+            <v-sheet height="800px">
+              <v-calendar
+                  ref="calendar"
+                  v-model="focus"
+                  color="primary"
+                  :events="events"
+                  :event-color="getEventColor"
+                  :type="type"
+                  @click:event="showEvent"
+                  @click:more="viewDay"
+                  @click:date="viewDay"
+                  @contextmenu:date="addEvent"
+                  @click:day="preAdd"
+                  @change="updateRange"
+              ></v-calendar>
+              <!--          卡片-->
+              <v-menu
+                  v-model="selectedOpen"
+                  :close-on-content-click="false"
+                  :activator="selectedElement"
+                  offset-x
+              >
+                <v-card
+                    color="grey lighten-4"
+                    min-width="20vw"
+                    flat
                 >
-                  Today
-                </v-btn>
-                <v-btn
-                    fab
-                    text
-                    small
-                    color="grey darken-2"
-                    @click="prev"
-                >
-                  <v-icon small>
-                    mdi-chevron-left
-                  </v-icon>
-                </v-btn>
-                <v-btn
-                    fab
-                    text
-                    small
-                    color="grey darken-2"
-                    @click="next"
-                >
-                  <v-icon small>
-                    mdi-chevron-right
-                  </v-icon>
-                </v-btn>
-                <v-toolbar-title v-if="$refs.calendar">
-                  {{ $refs.calendar.title }}
-                </v-toolbar-title>
-                <v-spacer></v-spacer>
-                <!--            <template v-slot:activator="{ on, attrs }">-->
-                <!--              <v-btn-->
-                <!--                  outlined-->
-                <!--                  color="grey darken-2"-->
-                <!--                  v-bind="attrs"-->
-                <!--                  v-on="on"-->
-                <!--              >-->
-                <!--                <span>{{ typeToLabel[type] }}</span>-->
-                <!--                <v-icon right>-->
-                <!--                  mdi-menu-down-->
-                <!--                </v-icon>-->
-                <!--              </v-btn>-->
-                <!--            </template>-->
-                <v-btn
-                    outlined
-                    class="mr-2"
-                    color="grey darken-2"
-                    @click="type = 'day'"
-                >
-                  Day
-                </v-btn>
-                <v-btn
-                    outlined
-                    class="mr-2"
-                    color="grey darken-2"
-                    @click="type = 'week'"
-                >
-                  week
-                </v-btn>
-                <v-btn
-                    outlined
-                    class="mr-2"
-                    color="grey darken-2"
-                    @click="type = 'month'"
-                >
-                  month
-                </v-btn>
-              </v-toolbar>
-
-
-              <v-sheet height="100%">
-                <!--          日历-->
-                <v-calendar
-                    ref="calendar"
-                    v-model="focus"
-                    color="primary"
-                    :events="events"
-                    :event-color="getEventColor"
-                    :type="type"
-                    @click:event="showEvent"
-                    @click:more="viewDay"
-                    @click:date="viewDay"
-                    @contextmenu:date="addEvent"
-                    @click:day="preAdd"
-                    @change="updateRange"
-                ></v-calendar>
-                <!--          卡片-->
-                <v-menu
-                    v-model="selectedOpen"
-                    :close-on-content-click="false"
-                    :activator="selectedElement"
-                    offset-x
-                >
-                  <v-card
-                      color="grey lighten-4"
-                      min-width="20vw"
-                      flat
+                  <v-toolbar
+                      :color="selectedEvent.color"
+                      dark
                   >
-                    <v-toolbar
-                        :color="selectedEvent.color"
-                        dark
+                    <v-btn icon>
+                      <v-icon>mdi-pencil</v-icon>
+                    </v-btn>
+                    <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
+                    <v-spacer></v-spacer>
+                    <v-btn icon>
+                      <v-icon>mdi-heart</v-icon>
+                    </v-btn>
+                    <v-btn icon>
+                      <v-icon>mdi-dots-vertical</v-icon>
+                    </v-btn>
+                  </v-toolbar>
+                  <v-card-text>
+                    <span v-html="selectedEvent.details"></span>
+                  </v-card-text>
+                  <v-card-actions>
+                    <v-btn
+                        text
+                        color="secondary"
+                        @click="selectedOpen = false"
                     >
-                      <v-btn icon>
-                        <v-icon>mdi-pencil</v-icon>
-                      </v-btn>
-                      <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
-                      <v-spacer></v-spacer>
-                      <v-btn icon>
-                        <v-icon>mdi-heart</v-icon>
-                      </v-btn>
-                      <v-btn icon>
-                        <v-icon>mdi-dots-vertical</v-icon>
-                      </v-btn>
-                    </v-toolbar>
-                    <v-card-text>
-                      <span v-html="selectedEvent.details"></span>
-                    </v-card-text>
-                    <v-card-actions>
-                      <v-btn
-                          text
-                          color="secondary"
-                          @click="selectedOpen = false"
-                      >
-                        Cancel
-                      </v-btn>
-                    </v-card-actions>
-                  </v-card>
-                </v-menu>
-              </v-sheet>
+                      Cancel
+                    </v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-menu>
             </v-sheet>
           </v-col>
         </v-row>
-      </v-card-text>
 
     </v-card>
   </v-app>
@@ -273,10 +333,31 @@
 
 export default {
   data: () => ({
+    //标题栏
+    newSearch: null,
+
+    //待办栏
+    tab: null,
+    tasks: [
+      {
+        done: false,
+        text: '开会',
+      },
+      {
+        done: false,
+        text: '发邮件',
+      },
+      {
+        done: false,
+        text: '填工时',
+      },
+    ],
+    newTask: null,
+
+    //日历栏
     drawer: false,
     group: null,
     ifcalendar: true,
-    tab: null,
     focus: '',
     type: 'month',
     typeToLabel: {
@@ -291,11 +372,38 @@ export default {
     events: [],
     colors: ['blue', 'indigo', 'deep-purple', 'cyan', 'green', 'orange', 'grey darken-1'],
     names: ['Meeting', 'Holiday', 'PTO', 'Travel', 'Event', 'Birthday', 'Conference', 'Party'],
+
+    //
+
   }),
+  computed: {
+    completedTasks () {
+      return this.tasks.filter(task => task.done).length
+    },
+    progress () {
+      return this.completedTasks / this.tasks.length * 100
+    },
+    remainingTasks () {
+      return this.tasks.length - this.completedTasks
+    },
+  },
   mounted () {
     this.$refs.calendar.checkChange()
   },
   methods: {
+    //标题栏
+    Search(){
+
+    },
+    //待办栏
+    create () {
+      this.tasks.push({
+        done: false,
+        text: this.newTask,
+      })
+      this.newTask = null
+    },
+    //日历
     viewDay ({ date }) {
       this.focus = date
       this.type = 'day'
@@ -305,6 +413,7 @@ export default {
     },
     setToday () {
       this.focus = ''
+      this.type = 'day'
     },
     prev () {
       this.$refs.calendar.prev()
@@ -388,10 +497,18 @@ export default {
       this.events.push(preEvent)
 
     },
+
+
   },
 }
 </script>
 
 <style scoped>
-
+.unselected{
+  font-size: large;
+  color: gray;
+}
+.selected {
+  color: black;
+}
 </style>
