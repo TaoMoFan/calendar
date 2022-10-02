@@ -103,25 +103,24 @@
                   v-model="tab"
                   color="green"
 
-
               >
                 <v-tab key="1" style="min-width: 5%">
                   <v-icon color="orange darken-2">mdi-arrow-up-bold-box-outline</v-icon>
                 </v-tab>
                 <v-tab key="2" style="min-width: 5%">
-                  <v-icon>mdi-heart</v-icon>
+                  <v-icon color="blue darken-2">mdi-heart</v-icon>
                 </v-tab>
                 <v-tab key="3" style="min-width: 5%">
-                  <v-icon>mdi-account-box</v-icon>
+                  <v-icon color="indigo darken-2"> mdi-account-box</v-icon>
                 </v-tab>
                 <v-tab key="4" style="min-width: 5%">
                   <v-icon color="teal darken-2">mdi-email</v-icon>
                 </v-tab>
                 <v-tab key="5" style="min-width: 5%">
-                  <v-icon color="blue-grey darken-2">mdi-call-split</v-icon>
+                  <v-icon color="deep-purple darken-2">mdi-call-split</v-icon>
                 </v-tab>
                 <v-tab key="6" style="min-width: 5%">
-                <v-icon color="blue-grey darken-2">mdi-call-split</v-icon>
+                <v-icon color="cyan darken-2">mdi-dialpad</v-icon>
               </v-tab>
               </v-tabs>
 

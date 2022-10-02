@@ -1,11 +1,12 @@
 <template>
   <v-card>
 <v-btn-toggle>
-  <v-btn>1</v-btn>
-  <v-btn>1</v-btn>
+  <v-btn @click="change('1')">1</v-btn>
+  <v-btn >1</v-btn>
   <v-btn>1</v-btn>
   <v-btn>1</v-btn>
 </v-btn-toggle>
+    <v-sheet v-if="type === '1'" style="background-color: burlywood;height: 100px"></v-sheet>
   </v-card>
 </template>
 
@@ -13,6 +14,7 @@
 export default {
   data () {
     return {
+      type: '1',
       tab: null,
       items: [
         { tab: 'One', content: 'Tab 1 Content' },
@@ -28,5 +30,10 @@ export default {
       ],
     }
   },
+  methods: {
+    change(type){
+      this.type = type
+    }
+  }
 }
 </script>
