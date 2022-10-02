@@ -105,6 +105,7 @@
 <!--      内容-->
         <v-row>
 <!--          待办-->
+
           <v-col cols="4" class="pr-0 pt-0">
             <v-sheet class="overflow-hidden">
               <v-tabs
@@ -136,23 +137,38 @@
               <v-tabs-items v-model="tab">
                 <v-tab-item key="1">
                   <v-container style="max-width: 500px">
-                    <v-text-field
-                        v-model="newTask"
-                        label="新建待办事项"
-                        solo
-                        @keydown.enter="create"
-                    >
-                      <template v-slot:append>
-                        <v-fade-transition>
-                          <v-icon
-                              v-if="newTask"
-                              @click="create"
+                    <v-card class="addEventCard mb-2">
+                       <v-caed-title class="d-flex align-center">
+                          <v-text-field
+                          outlined
+                          v-model="newTask"
+                          label="新建待办事项"
+                          @keydown.enter="create"
+                          @click="expandNewEvent"
+                          @blur="blurNewEvent"
                           >
-                            mdi-plus-circle
-                          </v-icon>
-                        </v-fade-transition>
-                      </template>
-                    </v-text-field>
+                            <template v-slot:append>
+                              <v-fade-transition>
+                                <v-icon
+                                    v-if="newTask"
+                                    @click="create"
+                                >
+                                  mdi-plus-circle
+                                </v-icon>
+                              </v-fade-transition>
+                            </template>
+                          </v-text-field>
+                       </v-caed-title>
+                       <v-expand-transition>
+                          <div v-show="showNewEvent">
+                            <v-divider></v-divider>
+                            <v-card-text>
+                              I'm a thing. But, like most politicians, he promised more than he could deliver. You won't have time for sleeping, soldier, not with all the bed making you'll be doing. Then we'll go with that data file! Hey, you add a one and two zeros to that or we walk! You're going to do his laundry? I've got to find a way to escape.
+                            </v-card-text>
+                          </div>
+                        </v-expand-transition>
+                    </v-card>
+
 
                     <h2 class="text-h4 success--text pl-4">
                       总计:&nbsp;
@@ -373,6 +389,7 @@ export default {
         text: '填工时',
       },
     ],
+    showNewEvent: false,
     newTask: null,
 
     //日历栏
@@ -417,6 +434,12 @@ export default {
       alert('search')
     },
     //待办栏
+    expandNewEvent(){
+      this.showNewEvent = true
+    },
+    blurNewEvent(){
+      this.showNewEvent = false
+    },
     create () {
       this.tasks.push({
         done: false,
@@ -531,5 +554,13 @@ export default {
 }
 .selected {
   color: black;
+}
+.addEventCard >>>.v-input__slot{
+margin-bottom: 0px;
+}
+.addEventCard >>>.v-text-field__details{
+margin-bottom: 0px;
+min-height: 0px;
+max-height: 0px;
 }
 </style>
