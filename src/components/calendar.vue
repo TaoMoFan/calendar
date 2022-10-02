@@ -3,7 +3,9 @@
     <v-card>
 <!--      标题栏-->
       <v-card-title class="px-1">
-          <v-btn
+        <v-row>
+          <v-col class="d-flex align-center">          
+            <v-btn
               @click="drawer = true"
               outlined
               elevation="1"
@@ -11,86 +13,91 @@
             <v-icon dark>
               mdi-account-circle
             </v-icon>
-          </v-btn>
+            </v-btn>
 <!--          左侧弹窗遮罩-->
-        <v-navigation-drawer
-            v-model="drawer"
-            absolute
-            temporary
-            width="20%"
-        >
-          <v-list
-              nav
-              dense
+            <v-navigation-drawer
+              v-model="drawer"
+              absolute
+              temporary
+              width="20%"
           >
-            <v-list-item-group
-                v-model="group"
-                active-class="deep-purple--text text--accent-4"
+            <v-list
+                nav
+                dense
             >
-              <v-list-item>
-                <v-list-item-icon>
-                  <v-icon>mdi-home</v-icon>
-                </v-list-item-icon>
-                <v-list-item-title>Home</v-list-item-title>
-              </v-list-item>
+              <v-list-item-group
+                  v-model="group"
+                  active-class="deep-purple--text text--accent-4"
+              >
+                <v-list-item>
+                  <v-list-item-icon>
+                    <v-icon>mdi-home</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-title>Home</v-list-item-title>
+                </v-list-item>
 
-              <v-list-item>
-                <v-list-item-icon>
-                  <v-icon>mdi-account</v-icon>
-                </v-list-item-icon>
-                <v-list-item-title>Account</v-list-item-title>
-              </v-list-item>
-            </v-list-item-group>
-          </v-list>
-        </v-navigation-drawer>
-        <v-spacer></v-spacer>
-        <v-btn
+                <v-list-item>
+                  <v-list-item-icon>
+                    <v-icon>mdi-account</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-title>Account</v-list-item-title>
+                </v-list-item>
+              </v-list-item-group>
+            </v-list>
+            </v-navigation-drawer>
+          </v-col>
+          <v-col class="d-flex justify-center align-center">
+            <v-btn
             outlined
-            class="mr-3 unselected"
+            class="mx-1 unselected "
             :class="{selected: type === 'day'}"
             @click="setToday"
             :elevation="type === 'day' ? 0 : 3"
         >
           今天
-        </v-btn>
-        <v-btn
-            class="mr-3 unselected"
-            :class="{selected: type ==='week'}"
-            outlined
-            @click="type = 'week'"
-            :elevation="type === 'week' ? 0 : 3"
+            </v-btn>
+            <v-btn
+                class="mx-1 unselected"
+                :class="{selected: type ==='week'}"
+                outlined
+                @click="type = 'week'"
+                :elevation="type === 'week' ? 0 : 3"
+            >
+              本周
+            </v-btn>
+            <v-btn
+                class="mx-1 unselected"
+                :class="{selected: type === 'month'}"
+                outlined
+                @click="type = 'month'"
+                :elevation="type === 'month' ? 0 : 3"
+            >
+              本月
+            </v-btn>
+          </v-col>
+          <v-col>
+            <v-text-field
+          hide-details
+          v-model="newTask"
+          label="搜索"
+          solo
+          @keydown.enter="create"
         >
-          本周
-        </v-btn>
-        <v-btn
-            class="mr-3 unselected"
-            :class="{selected: type === 'month'}"
-            outlined
-            @click="type = 'month'"
-            :elevation="type === 'month' ? 0 : 3"
-        >
-          本月
-        </v-btn>
-        <v-spacer></v-spacer>
-        <v-responsive  class="d-flex align-center"  max-width="15%">
-          <v-text-field
-              v-model="newSearch"
-              label="搜索"
-              solo
-              @keydown.enter="create"
-          >
             <template v-slot:append>
-              <v-fade-transition>
-                <v-icon
-                    v-if="newSearch"
-                    @click="Search"
-                >
-                  mdi-magnify
-                </v-icon>
-              </v-fade-transition>
+                <v-fade-transition>
+                  <v-icon
+                    v-if="newTask"
+                    @click="create"
+                  >
+                    mdi-plus-circle
+                  </v-icon>
+                  </v-fade-transition>
             </template>
-          </v-text-field>
-        </v-responsive>
+            </v-text-field>
+          </v-col>
+        </v-row>
+
+
 
       </v-card-title>
 <!--      内容-->
@@ -105,7 +112,7 @@
 
               >
                 <v-tab key="1" style="min-width: 5%">
-                  <v-icon color="orange darken-2">mdi-arrow-up-bold-box-outline</v-icon>
+                    <v-icon color="orange darken-2">mdi-arrow-up-bold-box-outline</v-icon>
                 </v-tab>
                 <v-tab key="2" style="min-width: 5%">
                   <v-icon color="blue darken-2">mdi-heart</v-icon>
@@ -223,6 +230,19 @@
                   </v-container>
                 </v-tab-item>
                 <v-tab-item key="2">
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-icon
+                        color="primary"
+                        dark
+                        v-bind="attrs"
+                        v-on="on"
+                      >
+                        mdi-home
+                      </v-icon>
+                    </template>
+                    <span>Tooltip</span>
+                  </v-tooltip>
                 </v-tab-item>
                 <v-tab-item key="3">3</v-tab-item>
                 <v-tab-item key="4">2</v-tab-item>
