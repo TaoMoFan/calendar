@@ -77,17 +77,17 @@
           </v-col>
           <v-col>
             <v-text-field
-          hide-details
-          v-model="newTask"
-          label="搜索"
-          solo
-          @keydown.enter="create"
-        >
+              hide-details
+              v-model="newSearch"
+              label="搜索"
+              solo
+              @keydown.enter="Search"
+            >
             <template v-slot:append>
                 <v-fade-transition>
                   <v-icon
-                    v-if="newTask"
-                    @click="create"
+                    v-if="newSearch"
+                    @click="Search"
                   >
                     mdi-plus-circle
                   </v-icon>
@@ -412,7 +412,7 @@ export default {
   methods: {
     //标题栏
     Search(){
-
+      alert('search')
     },
     //待办栏
     create () {
