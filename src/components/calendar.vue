@@ -76,24 +76,26 @@
             </v-btn>
           </v-col>
           <v-col>
-            <v-text-field
-              hide-details
-              v-model="newSearch"
-              label="搜索"
-              solo
-              @keydown.enter="Search"
-            >
-            <template v-slot:append>
-                <v-fade-transition>
-                  <v-icon
-                    v-if="newSearch"
-                    @click="Search"
-                  >
-                    mdi-plus-circle
-                  </v-icon>
-                  </v-fade-transition>
-            </template>
-            </v-text-field>
+            <v-row>
+              <v-col cols="4"></v-col>
+            <v-col>
+              <v-text-field
+                dense
+                hide-details
+                prepend-inner-icon="mdi-magnify"
+                outlined
+                color="gray"
+                label="搜索"
+                clearable
+                v-model="newSearch"
+                @click:prepend-inner="Search"
+                @keydown.enter="Search"
+              >
+              </v-text-field>
+            </v-col>
+            </v-row>
+
+
           </v-col>
         </v-row>
 
