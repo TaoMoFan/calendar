@@ -137,12 +137,14 @@
               <v-tabs-items v-model="tab">
                 <v-tab-item key="1">
                   <v-container style="max-width: 500px">
-                    <v-card class="addEventCard mb-2">
-                       <v-caed-title class="d-flex align-center">
+                    <v-card class=" mb-2">
+                       <v-sheet class=" d-flex align-center">
                           <v-text-field
+                          hide-details=""
                           outlined
-                          v-model="newTask"
+                          v-model="eventName"
                           label="新建待办事项"
+                          placeholder="待办事项名称"
                           @keydown.enter="create"
                           @click="expandNewEvent"
                           @blur="blurNewEvent"
@@ -150,7 +152,7 @@
                             <template v-slot:append>
                               <v-fade-transition>
                                 <v-icon
-                                    v-if="newTask"
+                                    v-if="eventName"
                                     @click="create"
                                 >
                                   mdi-plus-circle
@@ -158,13 +160,83 @@
                               </v-fade-transition>
                             </template>
                           </v-text-field>
-                       </v-caed-title>
+                       </v-sheet>
                        <v-expand-transition>
                           <div v-show="showNewEvent">
                             <v-divider></v-divider>
-                            <v-card-text>
-                              I'm a thing. But, like most politicians, he promised more than he could deliver. You won't have time for sleeping, soldier, not with all the bed making you'll be doing. Then we'll go with that data file! Hey, you add a one and two zeros to that or we walk! You're going to do his laundry? I've got to find a way to escape.
-                            </v-card-text>
+                            <v-sheet class="mt-1">
+                              <v-textarea
+                                dense
+                                auto-grow
+                                counter
+                                outlined
+                                clearable
+                                prepend-inner-icon="mdi-comment"
+                                rows="3"
+                                name="input-3-4"
+                                label="备注内容"
+                                placeholder="不超过50字"
+                                :value="eventContent"
+                                :rules="eventContentRules"
+                              ></v-textarea>
+                            </v-sheet>
+                            <v-divider></v-divider>
+                            <v-sheet class="mt-1">
+                              <v-expansion-panels>
+                              <v-expansion-panel>
+                                <v-expansion-panel-header>
+                                  日期
+                                </v-expansion-panel-header>
+                                <v-expansion-panel-content>
+                                  <v-menu
+                                    ref="menu"
+                                    v-model="eventDateMenu"
+                                    :close-on-content-click="false"
+                                    :return-value.sync="dates"
+                                    transition="scale-transition"
+                                    offset-y
+                                    min-width="auto"
+                                  >
+                                    <template v-slot:activator="{ on, attrs }">
+                                      <v-combobox
+                                        v-model="eventDates"
+                                        multiple
+                                        chips
+                                        small-chips
+                                        label="Multiple picker in menu"
+                                        prepend-icon="mdi-calendar"
+                                        readonly
+                                        v-bind="attrs"
+                                        v-on="on"
+                                      ></v-combobox>
+                                    </template>
+                                    <v-date-picker
+                                      v-model="dates"
+                                      multiple
+                                      no-title
+                                      scrollable
+                                    >
+                                      <v-spacer></v-spacer>
+                                      <v-btn
+                                        text
+                                        color="primary"
+                                        @click="menu = false"
+                                      >
+                                        Cancel
+                                      </v-btn>
+                                      <v-btn
+                                        text
+                                        color="primary"
+                                        @click="$refs.menu.save(dates)"
+                                      >
+                                        OK
+                                      </v-btn>
+                                    </v-date-picker>
+                                  </v-menu>
+                                </v-expansion-panel-content>
+                              </v-expansion-panel>
+                            </v-expansion-panels>
+                            </v-sheet>
                           </div>
                         </v-expand-transition>
                     </v-card>
@@ -214,22 +286,21 @@
                               v-if="i !== 0"
                               :key="`${i}-divider`"
                           ></v-divider>
-
-                          <v-list-item :key="`${i}-${task.text}`">
-                            <v-list-item-action>
-                              <v-checkbox
-                                  v-model="task.done"
-                                  :color="task.done && 'grey' || 'primary'"
-                              >
-                                <template v-slot:label>
-                                  <div
-                                      :class="task.done && 'grey--text' || 'primary--text'"
-                                      class="ml-4"
-                                      v-text="task.text"
-                                  ></div>
-                                </template>
-                              </v-checkbox>
-                            </v-list-item-action>
+                            <v-list-item :key="`${i}-${task.text}`">
+                              <v-list-item-action>
+                                <v-checkbox
+                                    v-model="task.done"
+                                    :color="task.done && 'grey' || 'primary'"
+                                >
+                                  <template v-slot:label>
+                                    <div
+                                        :class="task.done && 'grey--text' || 'primary--text'"
+                                        class="ml-4"
+                                        v-text="task.text"
+                                    ></div>
+                                  </template>
+                                </v-checkbox>
+                              </v-list-item-action>
 
                             <v-spacer></v-spacer>
 
@@ -390,8 +461,11 @@ export default {
       },
     ],
     showNewEvent: false,
-    newTask: null,
-
+    eventName: null,
+    eventContent: '',
+    eventContentRules: [v => v.length <= 50 || 'Max 50 characters'],
+    eventDateMenu: false,
+    eventDates: [],
     //日历栏
     drawer: false,
     group: null,
@@ -438,14 +512,14 @@ export default {
       this.showNewEvent = true
     },
     blurNewEvent(){
-      this.showNewEvent = false
+      // this.showNewEvent = false
     },
     create () {
       this.tasks.push({
         done: false,
-        text: this.newTask,
+        text: this.eventName,
       })
-      this.newTask = null
+      this.eventName = null
     },
     //日历
     viewDay ({ date }) {
