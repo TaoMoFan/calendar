@@ -86,6 +86,7 @@
                 outlined
                 color="gray"
                 label="搜索"
+                placeholder="搜索事项名称或标签"
                 clearable
                 v-model="newSearch"
                 @click:prepend-inner="Search"
@@ -136,29 +137,27 @@
 
               <v-tabs-items v-model="tab">
                 <v-tab-item key="1">
-                  <v-container style="max-width: 500px">
+                  <v-container >
                     <v-card class=" mb-2">
                        <v-sheet class=" d-flex align-center">
                           <v-text-field
                           hide-details=""
                           outlined
-                          v-model="eventName"
+                          v-model="eventForm.eventName"
                           label="新建待办事项"
                           placeholder="待办事项名称"
-                          @keydown.enter="create"
                           @click="expandNewEvent"
-                          @blur="blurNewEvent"
                           >
-                            <template v-slot:append>
-                              <v-fab-transition>
-                                <v-icon
-                                    v-if="eventName"
-                                    @click="create"
-                                >
-                                  mdi-plus-circle
-                                </v-icon>
-                              </v-fab-transition>
-                            </template>
+<!--                            <template v-slot:append>-->
+<!--                              <v-fab-transition>-->
+<!--                                <v-icon-->
+<!--                                    v-if="eventForm.eventName"-->
+<!--                                    @click="create"-->
+<!--                                >-->
+<!--                                  mdi-plus-circle-->
+<!--                                </v-icon>-->
+<!--                              </v-fab-transition>-->
+<!--                            </template>-->
                           </v-text-field>
                        </v-sheet>
                        <v-expand-transition>
@@ -192,12 +191,13 @@
                                         name="input-3-4"
                                         label="备注内容"
                                         placeholder="不超过50字"
-                                        :value="eventContent"
+                                        v-model="eventForm.eventContent"
                                         :rules="eventContentRules"
                                       ></v-textarea>
                                     </v-sheet>
                                   </v-expansion-panel-content>
                                 </v-expansion-panel>
+
                                 <v-expansion-panel >
                                   <v-expansion-panel-header>
                                     时间日期
@@ -216,15 +216,15 @@
                                       ref="menu"
                                       v-model="eventDateMenu"
                                       :close-on-content-click="false"
-                                      :return-value.sync="eventDates"
+                                      :return-value.sync="eventForm.eventDates"
                                       transition="scale-transition"
                                       offset-y
                                       min-width="auto"
                                     >
                                       <template v-slot:activator="{ on, attrs }">
                                         <v-combobox
-                                          v-model="eventDates"
-                                          
+                                          v-model="eventForm.eventDates"
+                                          dense
                                           multiple
                                           outlined
                                           small-chips
@@ -236,12 +236,11 @@
                                           @click="eventDateMenu = !eventDateMenu"
                                         >
                                       </v-combobox>
-                                      {{ value1 }}
                                       <el-time-picker
                                       style="width: 100%"
                                       is-range
-                                      value-format="HH:mm"
-                                      v-model="value1"
+                                      value-format="HH:mm:ss"
+                                      v-model="eventForm.eventTime"
                                       range-separator="至"
                                       start-placeholder="开始时间"
                                       end-placeholder="结束时间"
@@ -249,12 +248,12 @@
                                     </el-time-picker>
                                       </template>
                                       <v-date-picker
-                                        v-model="eventDates"
+                                        v-model="eventForm.eventDates"
                                         multiple
                                         no-title
                                         scrollable
                                       >
-                                    
+
                                         <v-btn
                                           outlined
                                           elevation="3"
@@ -268,7 +267,7 @@
                                           outlined
                                           elevation="3"
                                           color="success darken-2"
-                                          @click="$refs.menu.save(eventDates)"
+                                          @click="$refs.menu.save(eventForm.eventDates)"
                                         >
                                           确认
                                         </v-btn>
@@ -291,27 +290,13 @@
                                     </template>
                                   </v-expansion-panel-header>
                                   <v-expansion-panel-content>
-                                    <el-time-picker
-                                      style="width: 100%"
-                                      is-range
-                                      value-format="HH:mm:ss"
-                                      v-model="value1"
-                                      range-separator="至"
-                                      start-placeholder="开始时间"
-                                      end-placeholder="结束时间"
-                                      placeholder="选择时间范围">
-                                    </el-time-picker>
-                                    <!-- <v-row>
-                                      <v-col>
-                                        <v-select
-                                          :items="eventTimeHours"
-                                          label="Outlined style"
-                                          dense
-                                          outlined
-                                        ></v-select>
-                                      </v-col>
-                                      <v-col></v-col>
-                                    </v-row> -->
+                                    <v-select
+                                        :items="eventRepeat"
+                                        label="重复规则"
+                                        dense
+                                        outlined
+                                        v-model="eventForm.eventRepeats"
+                                    ></v-select>
                                   </v-expansion-panel-content>
                                 </v-expansion-panel>
 
@@ -329,7 +314,161 @@
                                     </template>
                                   </v-expansion-panel-header>
                                   <v-expansion-panel-content>
+                                    <v-combobox
+                                        v-model="eventForm.eventModel"
+                                        :filter="filter"
+                                        :hide-no-data="!search"
+                                        :items="items"
+                                        :search-input.sync="search"
+                                        hide-selected
+                                        label="选择或输入标签"
+                                        multiple
+                                        small-chips
+                                        outlined
+                                        dense
+                                    >
+                                      <template v-slot:no-data>
+                                        <v-list-item>
+                                          <span class="subheading">新建标签</span>
+                                          <v-chip
+                                              :color="`${colors[nonce - 1]} lighten-3`"
+                                              label
+                                              small
+                                          >
+                                            {{ search }}
+                                          </v-chip>
+                                        </v-list-item>
+                                      </template>
+                                      <template v-slot:selection="{ attrs, item, parent, selected }">
+                                        <v-chip
+                                            v-if="item === Object(item)"
+                                            v-bind="attrs"
+                                            :color="`${item.color} lighten-3`"
+                                            :input-value="selected"
+                                            label
+                                            small
+                                        >
+                                          <span class="pr-2">
+                                            {{ item.text }}
+                                          </span>
+                                          <v-icon
+                                              small
+                                              @click="parent.selectItem(item)"
+                                          >
+                                            $delete
+                                          </v-icon>
+                                        </v-chip>
+                                      </template>
+                                      <template v-slot:item="{ index, item }">
+                                        <v-text-field
+                                            v-if="editing === item"
+                                            v-model="editing.text"
+                                            autofocus
+                                            flat
+                                            background-color="transparent"
+                                            hide-details
+                                            solo
+                                            @keyup.enter="edit(index, item)"
+                                        ></v-text-field>
+                                        <v-chip
+                                            v-else
+                                            :color="`${item.color} lighten-3`"
+                                            dark
+                                            label
+                                            small
+                                        >
+                                          {{ item.text }}
+                                        </v-chip>
+                                        <v-spacer></v-spacer>
+                                        <v-list-item-action @click.stop>
+                                          <v-btn
+                                              icon
+                                              @click.stop.prevent="edit(index, item)"
+                                          >
+                                            <v-icon>{{ editing !== item ? 'mdi-pencil' : 'mdi-check' }}</v-icon>
+                                          </v-btn>
+                                        </v-list-item-action>
+                                      </template>
+                                    </v-combobox>
+                                  </v-expansion-panel-content>
+                                </v-expansion-panel>
 
+                                <v-expansion-panel>
+                                  <v-expansion-panel-header>
+                                    关联
+                                    <template v-slot:actions>
+                                      <v-switch
+                                          color="red darken-2"
+                                          class="mt-0 pt-0"
+                                          dense
+                                          hide-details
+                                          :value="ifineventExpanValue(4)"
+                                      >
+                                      </v-switch>
+                                    </template>
+                                  </v-expansion-panel-header>
+                                  <v-expansion-panel-content>
+                                    <v-combobox
+                                        v-model="eventForm.eventRelationListIPMP"
+                                        :items="eventRelationLists"
+                                        label="关联IPMP任务"
+                                        placeholder="选择IPMP任务"
+                                        outlined
+                                        multiple
+                                        chips
+                                        color="red darken-2"
+                                    >
+                                      <template v-slot:selection="data">
+                                        <v-chip
+                                            :key="JSON.stringify(data.item)"
+                                            v-bind="data.attrs"
+                                            :input-value="data.selected"
+                                            :disabled="data.disabled"
+                                            @click:close="data.parent.selectItem(data.item)"
+
+                                        >
+                                          <v-avatar
+                                              color="red darken-2"
+                                              class=" white--text"
+                                              left
+                                              v-text="data.item.slice(0,1).toUpperCase()"
+
+                                          >
+                                          </v-avatar>
+                                          {{ data.item }}
+                                        </v-chip>
+                                      </template>
+                                    </v-combobox>
+                                    <v-combobox
+                                        v-model="eventForm.eventRelationListOKR"
+                                        :items="eventRelationLists"
+                                        label="关联OKR重点项目"
+                                        outlined
+                                        multiple
+                                        chips
+                                        color="red darken-2"
+                                        
+                                    >
+                                      <template v-slot:selection="data">
+                                        <v-chip
+                                            :key="JSON.stringify(data.item)"
+                                            v-bind="data.attrs"
+                                            :input-value="data.selected"
+                                            :disabled="data.disabled"
+                                            @click:close="data.parent.selectItem(data.item)"
+
+                                        >
+                                          <v-avatar
+                                              color="red darken-2"
+                                              class=" white--text"
+                                              left
+                                              v-text="data.item.slice(0,1).toUpperCase()"
+                                          >
+                                          </v-avatar>
+                                          {{ data.item }}
+                                        </v-chip>
+                                      </template>
+                                    </v-combobox>
                                   </v-expansion-panel-content>
                                 </v-expansion-panel>
 
@@ -341,96 +480,123 @@
                                       class="mt-0 pt-0"
                                       dense
                                       hide-details
-                                      :value="ifineventExpanValue(4)"
+                                      :value="ifineventExpanValue(5)"
                                       >
                                       </v-switch>
                                     </template>
                                   </v-expansion-panel-header>
                                   <v-expansion-panel-content>
-
+                                    <v-combobox
+                                        v-model="eventForm.eventTeamList"
+                                        :items="eventTeamLists"
+                                        label="选择团队成员"
+                                        outlined
+                                        multiple
+                                        chips
+                                    >
+                                      <template v-slot:selection="data">
+                                        <v-chip
+                                            :key="JSON.stringify(data.item)"
+                                            v-bind="data.attrs"
+                                            :input-value="data.selected"
+                                            :disabled="data.disabled"
+                                            @click:close="data.parent.selectItem(data.item)"
+                                        >
+                                          <v-avatar
+                                              class="accent white--text"
+                                              left
+                                              v-text="data.item.slice(0, 1).toUpperCase()"
+                                          ></v-avatar>
+                                          {{ data.item }}
+                                        </v-chip>
+                                      </template>
+                                    </v-combobox>
                                   </v-expansion-panel-content>
                                 </v-expansion-panel>
                             </v-expansion-panels>
+
+                              <v-sheet class="d-flex ma-2 pb-2">
+                                <v-btn outlined elevation="2" color="red darken-2" @click="cancelAdd">取消</v-btn>
+                                <v-spacer></v-spacer>
+                                <v-btn :disabled="eventForm.eventName == null || eventForm.eventName == ''" outlined elevation="2" color="teal darken-2" @click="add">
+                                  新建
+                                  <v-icon>
+                                    mdi-plus-circle
+                                  </v-icon>
+                                </v-btn>
+                              </v-sheet>
                             </v-sheet>
                           </div>
                         </v-expand-transition>
                     </v-card>
 
 
-                    <h2 class="text-h4 success--text pl-4">
-                      总计:&nbsp;
-                      <v-fade-transition leave-absolute>
-                        <span :key="`tasks-${tasks.length}`">
-                          {{ tasks.length }}
-                        </span>
-                      </v-fade-transition>
-                    </h2>
-                    <v-divider class="mt-4"></v-divider>
+
                     <v-row
                         class="my-1"
                         align="center"
                     >
+                      <strong class="mx-4 error--text text--darken-2">
+                        {{ computertype }}总计: {{ events.length }}
+                      </strong>
+                      <v-divider vertical></v-divider>
                       <strong class="mx-4 info--text text--darken-2">
                         剩余待办: {{ remainingTasks }}
                       </strong>
-
                       <v-divider vertical></v-divider>
-
                       <strong class="mx-4 success--text text--darken-2">
                         已完成: {{ completedTasks }}
                       </strong>
-
                       <v-spacer></v-spacer>
-
                       <v-progress-circular
                           :value="progress"
                           class="mr-2"
                       ></v-progress-circular>
+
+
                     </v-row>
-
                     <v-divider class="mb-4"></v-divider>
-
-                    <v-card v-if="tasks.length > 0">
+                    <v-card v-if="events.length > 0">
                       <v-slide-y-transition
                           class="py-0"
                           group
-                          tag="v-list"
                       >
-                        <template v-for="(task, i) in tasks">
-                          <v-divider
-                              v-if="i !== 0"
-                              :key="`${i}-divider`"
-                          ></v-divider>
-                            <v-list-item :key="`${i}-${task.text}`">
-                              <v-list-item-action>
-                                <v-checkbox
-                                    v-model="task.done"
-                                    :color="task.done && 'grey' || 'primary'"
-                                >
-                                  <template v-slot:label>
-                                    <div
-                                        :class="task.done && 'grey--text' || 'primary--text'"
-                                        class="ml-4"
-                                        v-text="task.text"
-                                    ></div>
-                                  </template>
-                                </v-checkbox>
-                              </v-list-item-action>
+                        <template >
+<!--                         <v-expansion-panels accordion focusable multiple :key="i" v-model="eventListValue">-->
+                           <v-expansion-panel v-for="(event, i) in events" :key="i">
+                             <v-expansion-panel-header>
+                               <v-checkbox
+                                   v-model="event.done"
+                                   :color="event.done && 'grey' || 'primary'"
+                               >
+                                 <template v-slot:label>
+                                   <div
+                                       :class="event.done && 'grey--text' || 'primary--text'"
+                                       class="ml-4"
+                                       v-text="event.name"
+                                   ></div>
+                                 </template>
+                               </v-checkbox>
+                               <v-spacer></v-spacer>
+                               <v-scroll-x-transition>
+                                 <v-icon
+                                     v-if="event.done"
+                                     color="success"
+                                 >
+                                   mdi-check
+                                 </v-icon>
+                               </v-scroll-x-transition>
+                             </v-expansion-panel-header>
+                             <v-expansion-panel-content>
 
-                            <v-spacer></v-spacer>
+                             </v-expansion-panel-content>
+                           </v-expansion-panel>
+<!--                         </v-expansion-panels>-->
 
-                            <v-scroll-x-transition>
-                              <v-icon
-                                  v-if="task.done"
-                                  color="success"
-                              >
-                                mdi-check
-                              </v-icon>
-                            </v-scroll-x-transition>
-                          </v-list-item>
                         </template>
                       </v-slide-y-transition>
                     </v-card>
+
                   </v-container>
                 </v-tab-item>
                 <v-tab-item key="2">
@@ -562,29 +728,78 @@ export default {
 
     //待办栏
     tab: null,
-    tasks: [
+    events: [
       {
         done: false,
-        text: '开会',
+        name: '开会',
+        start: '2022-10-10 15:00:00',
+        end: '2022-10-10 17:00:00',
+        color: 'indigo',
+        timed: true
       },
       {
         done: false,
-        text: '发邮件',
+        name: '发邮件',
+        start: '2022-10-17 09:00:00',
+        end: '2022-10-21 17:00:00',
+        color: 'teal',
+        timed: true
       },
       {
         done: false,
-        text: '填工时',
+        name: '填工时',
+        start: '2022-10-12 09:00:00',
+        end: '2022-10-12 17:00:00',
+        color: 'blue',
+        timed: true
       },
     ],
     showNewEvent: false,
-    eventName: null,
-    eventContent: '',
     eventContentRules: [v => v.length <= 50 || 'Max 50 characters'],
     eventDateMenu: false,
-    eventDates: [],
     eventExpanValue: [],
-    eventTimeHours: ['01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24'],
-    value1: ["09:00:00", "20:00:00"],
+    eventRepeat: ['每天','每个工作日','每周今天','每月今天'],
+    activator: null,
+    attach: null,
+    colors: ['blue', 'indigo', 'deep-purple','teal', 'cyan', 'green', 'orange', 'grey darken-1'],
+    editing: null,
+    editingIndex: -1,
+    items: [
+      {
+        text: '重要',
+        color: 'blue',
+      },
+      {
+        text: '紧急',
+        color: 'deep-purple',
+      },
+      {
+        text: '隐私',
+        color: 'red',
+      },
+    ],
+    nonce: 1,
+    menu: false,
+    x: 0,
+    search: null,
+    y: 0,
+    eventRelationLists: ['一号任务','二号任务','三号任务','四号任务'],
+    eventTeamLists: ['蒋冠初','尹叶龙','张伟男','郭燕燕'],
+    eventForm: {
+      eventId: '',
+      eventName: null,
+      eventContent: '',
+      eventDates: [],
+      eventTime: ['', ''],
+      eventRepeats: '',
+      eventModel: [],
+      eventRelationListOKR:[],
+      eventRelationListIPMP: [],
+      eventTeamList: [],
+      done: false
+    },
+    eventListValue: [],
+
     //日历栏
     drawer: false,
     group: null,
@@ -600,8 +815,6 @@ export default {
     selectedEvent: {},
     selectedElement: null,
     selectedOpen: false,
-    events: [],
-    colors: ['blue', 'indigo', 'deep-purple', 'cyan', 'green', 'orange', 'grey darken-1'],
     names: ['Meeting', 'Holiday', 'PTO', 'Travel', 'Event', 'Birthday', 'Conference', 'Party'],
 
     //
@@ -609,13 +822,42 @@ export default {
   }),
   computed: {
     completedTasks () {
-      return this.tasks.filter(task => task.done).length
+      return this.events.filter(event => event.done).length
     },
     progress () {
-      return this.completedTasks / this.tasks.length * 100
+      return this.completedTasks / this.events.length * 100
     },
     remainingTasks () {
-      return this.tasks.length - this.completedTasks
+      return this.events.length - this.completedTasks
+    },
+    computertype () {
+      if(this.type == 'month'){
+        return '本月'
+      }else if (this.type == 'week'){
+        return '本周'
+      }else {
+        return '今天'
+      }
+    }
+  },
+  watch:{
+    'eventForm.eventModel' (val, prev) {
+      if (val.length === prev.length) return
+
+      this.eventForm.eventModel = val.map(v => {
+        if (typeof v === 'string') {
+          v = {
+            text: v,
+            color: this.colors[this.nonce - 1],
+          }
+
+          this.items.push(v)
+
+          this.nonce++
+        }
+
+        return v
+      })
     },
   },
   mounted () {
@@ -627,23 +869,48 @@ export default {
       alert('search')
     },
     //待办栏
+    add(){
+      let event = {
+        name: this.eventForm.eventName,
+        start: this.eventForm.eventDates[0] + ' ' + this.eventForm.eventTime[0],
+        end: this.eventForm.eventDates[0] + ' ' + this.eventForm.eventTime[1],
+        color: this.colors[this.rnd(0, this.colors.length - 1)],
+        timed: true,
+      }
+      console.log(this.eventForm)
+      this.events.push(event)
+      console.log(this.events)
+    },
+    cancelAdd(){
+      this.showNewEvent = false
+    },
     expandNewEvent(){
       this.showNewEvent = true
-    },
-    blurNewEvent(){
-      // this.showNewEvent = false
     },
     ifineventExpanValue(v){
       return this.eventExpanValue.indexOf(v) > -1
     },
-    create () {
-      this.tasks.push({
-        done: false,
-        text: this.eventName,
-      })
-      this.eventName = null
+    edit (index, item) {
+      if (!this.editing) {
+        this.editing = item
+        this.editingIndex = index
+      } else {
+        this.editing = null
+        this.editingIndex = -1
+      }
     },
-    click(v){console.log(v)},
+    filter (item, queryText, itemText) {
+      if (item.header) return false
+
+      const hasValue = val => val != null ? val : ''
+
+      const text = hasValue(itemText)
+      const query = hasValue(queryText)
+
+      return text.toString()
+          .toLowerCase()
+          .indexOf(query.toString().toLowerCase()) > -1
+    },
     //日历
     viewDay ({ date }) {
       this.focus = date
@@ -718,7 +985,7 @@ export default {
             timed: true,
           }
       )
-      this.events = e
+      // this.events = events
     },
     rnd (a, b) {
       return Math.floor((b - a + 1) * Math.random()) + a
@@ -738,7 +1005,6 @@ export default {
       this.events.push(preEvent)
 
     },
-
 
   },
 }

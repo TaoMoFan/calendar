@@ -1,23 +1,17 @@
 <template>
-  <v-card>
-    <v-card-title>
-      <v-btn>123</v-btn>
-      <v-input
-          prepend-icon="mdi-minus"
-          hide-details="auto"
-          @click:prepend="prependIconCallback"
+  <v-card width="30%">
+    <v-row justify="center">
+      <v-expansion-panels accordion>
+        <v-expansion-panel
+            v-for="(item,i) in items"
+            :key="i"
         >
-          Default Slot
-        </v-input>
-    </v-card-title>
-    <v-btn-toggle>
-  <v-btn @click="change('1')">1</v-btn>
-  <v-btn >1</v-btn>
-  <v-btn>1</v-btn>
-  <v-btn>1</v-btn>
-    </v-btn-toggle>
-    <v-sheet v-if="type === '1'" style="background-color: burlywood;height: 100px"></v-sheet>
-    
+          <v-expansion-panel-header>{{ item.tab }}</v-expansion-panel-header>
+          <v-expansion-panel-content>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+      </v-expansion-panels>
+    </v-row>
   </v-card>
 </template>
 
@@ -27,6 +21,17 @@ export default {
     return {
       type: '1',
       tab: null,
+      eventFormc: {
+        eventName: null,
+        eventContent: '',
+        eventDates: [],
+        eventTime: ['', ''],
+        eventRepeats: '',
+        eventModel: [],
+        eventRelationListOKR:[],
+        eventRelationListIPMP: [],
+        eventTeamList: [],
+      },
       items: [
         { tab: 'One', content: 'Tab 1 Content' },
         { tab: 'Two', content: 'Tab 2 Content' },
