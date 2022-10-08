@@ -531,7 +531,7 @@
                     </v-card>
 
 
-
+                    <v-divider class="mt-4"></v-divider>
                     <v-row
                         class="my-1"
                         align="center"
@@ -539,21 +539,25 @@
                       <strong class="mx-4 error--text text--darken-2">
                         {{ computertype }}总计: {{ events.length }}
                       </strong>
+
                       <v-divider vertical></v-divider>
+
                       <strong class="mx-4 info--text text--darken-2">
                         剩余待办: {{ remainingTasks }}
                       </strong>
+
                       <v-divider vertical></v-divider>
+
                       <strong class="mx-4 success--text text--darken-2">
                         已完成: {{ completedTasks }}
                       </strong>
+
                       <v-spacer></v-spacer>
+
                       <v-progress-circular
                           :value="progress"
                           class="mr-2"
                       ></v-progress-circular>
-
-
                     </v-row>
                     <v-divider class="mb-4"></v-divider>
                     <v-card v-if="events.length > 0">
@@ -561,38 +565,42 @@
                           class="py-0"
                           group
                       >
-                        <template >
-<!--                         <v-expansion-panels accordion focusable multiple :key="i" v-model="eventListValue">-->
-                           <v-expansion-panel v-for="(event, i) in events" :key="i">
-                             <v-expansion-panel-header>
-                               <v-checkbox
-                                   v-model="event.done"
-                                   :color="event.done && 'grey' || 'primary'"
-                               >
-                                 <template v-slot:label>
-                                   <div
-                                       :class="event.done && 'grey--text' || 'primary--text'"
-                                       class="ml-4"
-                                       v-text="event.name"
-                                   ></div>
-                                 </template>
-                               </v-checkbox>
-                               <v-spacer></v-spacer>
-                               <v-scroll-x-transition>
-                                 <v-icon
-                                     v-if="event.done"
-                                     color="success"
-                                 >
-                                   mdi-check
-                                 </v-icon>
-                               </v-scroll-x-transition>
-                             </v-expansion-panel-header>
-                             <v-expansion-panel-content>
+                        <template  v-for="(event, i) in events">
+                          <v-divider
+                              v-if="i !== 0"
+                              :key="`${i}-divider`"
+                          ></v-divider>
+                            <v-list-item :key="`${i}-${event.name}`">
+                              <v-list-item-action>
+                                <v-checkbox
+                                    v-model="event.done"
+                                    :color="event.done && 'grey' || 'primary'"
+                                >
+                                  <template v-slot:label>
+                                    <div
+                                        :class="event.done && 'grey--text' || 'primary--text'"
+                                        class="ml-2"
+                                        v-text="event.name"
+                                    ></div>
+                                    <v-spacer></v-spacer>
+                                    <div :class="event.done && 'grey--text' || 'primary--text'"
+                                         class="ml-2"
+                                         v-text="event.start">
+                                    </div>
+                                  </template>
+                                </v-checkbox>
+                              </v-list-item-action>
+                            <v-spacer></v-spacer>
+                            <v-scroll-x-transition>
+                              <v-icon
+                                  v-if="event.done"
+                                  color="success"
+                              >
+                                mdi-check
+                              </v-icon>
+                            </v-scroll-x-transition>
 
-                             </v-expansion-panel-content>
-                           </v-expansion-panel>
-<!--                         </v-expansion-panels>-->
-
+                          </v-list-item>
                         </template>
                       </v-slide-y-transition>
                     </v-card>
@@ -614,7 +622,9 @@
                     <span>Tooltip</span>
                   </v-tooltip>
                 </v-tab-item>
-                <v-tab-item key="3">3</v-tab-item>
+                <v-tab-item key="3">
+                  工时填报
+                </v-tab-item>
                 <v-tab-item key="4">2</v-tab-item>
                 <v-tab-item key="5">3</v-tab-item>
               </v-tabs-items>
@@ -732,7 +742,7 @@ export default {
       {
         done: false,
         name: '开会',
-        start: '2022-10-10 15:00:00',
+        start: '2022-10-11 15:00:00',
         end: '2022-10-10 17:00:00',
         color: 'indigo',
         timed: true
@@ -740,16 +750,16 @@ export default {
       {
         done: false,
         name: '发邮件',
-        start: '2022-10-17 09:00:00',
-        end: '2022-10-21 17:00:00',
+        start: '2022-10-14 09:00:00',
+        end: '2022-10-14 17:00:00',
         color: 'teal',
         timed: true
       },
       {
         done: false,
         name: '填工时',
-        start: '2022-10-12 09:00:00',
-        end: '2022-10-12 17:00:00',
+        start: '2022-10-17 09:00:00',
+        end: '2022-10-21 17:00:00',
         color: 'blue',
         timed: true
       },
@@ -790,7 +800,7 @@ export default {
       eventName: null,
       eventContent: '',
       eventDates: [],
-      eventTime: ['', ''],
+      eventTime: ['09:00:00', '10:00:00'],
       eventRepeats: '',
       eventModel: [],
       eventRelationListOKR:[],
@@ -798,7 +808,7 @@ export default {
       eventTeamList: [],
       done: false
     },
-    eventListValue: [],
+
 
     //日历栏
     drawer: false,
@@ -870,15 +880,22 @@ export default {
     },
     //待办栏
     add(){
-      let event = {
-        name: this.eventForm.eventName,
-        start: this.eventForm.eventDates[0] + ' ' + this.eventForm.eventTime[0],
-        end: this.eventForm.eventDates[0] + ' ' + this.eventForm.eventTime[1],
-        color: this.colors[this.rnd(0, this.colors.length - 1)],
-        timed: true,
+      if(this.eventForm.eventDates.length < 1){
+        this.eventForm.eventDates.push("2022-10-10")
       }
+      let events = []
+      this.eventForm.eventDates.map((v)=>{
+        let  event = {}
+        event.name = this.eventForm.eventName
+        event.start = v + ' ' + this.eventForm.eventTime[0]
+        event.end = v + ' ' + this.eventForm.eventTime[1]
+        event.color = this.colors[this.rnd(0, this.colors.length - 1)]
+        event.timed = true
+        events.push(event)
+      })
       console.log(this.eventForm)
-      this.events.push(event)
+      console.log(this.eventForm.eventDates[0] + ' ' + this.eventForm.eventTime[0])
+      this.events = this.events.concat(events)
       console.log(this.events)
     },
     cancelAdd(){
@@ -995,14 +1012,14 @@ export default {
     },
     preAdd(day){
       console.log('preAdd',day)
-      let preEvent = {
-        name: '新建事项',
-        start: day.date + ' 00:00',
-        end: day.date + ' 23:59',
-        color: 'grey',
-        timed: false
-      }
-      this.events.push(preEvent)
+      // let preEvent = {
+      //   name: '新建事项',
+      //   start: day.date + ' 00:00',
+      //   end: day.date + ' 23:59',
+      //   color: 'grey',
+      //   timed: false
+      // }
+      // this.events.push(preEvent)
 
     },
 

@@ -1,13 +1,14 @@
 <template>
   <v-card width="30%">
     <v-row justify="center">
-      <v-expansion-panels accordion>
+      <v-expansion-panels accordion focusable multiple v-model="eventExpanValue">
         <v-expansion-panel
             v-for="(item,i) in items"
             :key="i"
         >
           <v-expansion-panel-header>{{ item.tab }}</v-expansion-panel-header>
           <v-expansion-panel-content>
+            {{ item.content }}
           </v-expansion-panel-content>
         </v-expansion-panel>
       </v-expansion-panels>
@@ -21,6 +22,7 @@ export default {
     return {
       type: '1',
       tab: null,
+      eventExpanValue: [],
       eventFormc: {
         eventName: null,
         eventContent: '',
