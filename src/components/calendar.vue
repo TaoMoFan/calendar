@@ -3,7 +3,9 @@
     <v-card>
 <!--      标题栏-->
       <v-card-title class="px-1">
-          <v-btn
+        <v-row>
+          <v-col class="d-flex align-center">          
+            <v-btn
               @click="drawer = true"
               outlined
               elevation="1"
@@ -11,91 +13,99 @@
             <v-icon dark>
               mdi-account-circle
             </v-icon>
-          </v-btn>
+            </v-btn>
 <!--          左侧弹窗遮罩-->
-        <v-navigation-drawer
-            v-model="drawer"
-            absolute
-            temporary
-            width="20%"
-        >
-          <v-list
-              nav
-              dense
+            <v-navigation-drawer
+              v-model="drawer"
+              absolute
+              temporary
+              width="20%"
           >
-            <v-list-item-group
-                v-model="group"
-                active-class="deep-purple--text text--accent-4"
+            <v-list
+                nav
+                dense
             >
-              <v-list-item>
-                <v-list-item-icon>
-                  <v-icon>mdi-home</v-icon>
-                </v-list-item-icon>
-                <v-list-item-title>Home</v-list-item-title>
-              </v-list-item>
+              <v-list-item-group
+                  v-model="group"
+                  active-class="deep-purple--text text--accent-4"
+              >
+                <v-list-item>
+                  <v-list-item-icon>
+                    <v-icon>mdi-home</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-title>Home</v-list-item-title>
+                </v-list-item>
 
-              <v-list-item>
-                <v-list-item-icon>
-                  <v-icon>mdi-account</v-icon>
-                </v-list-item-icon>
-                <v-list-item-title>Account</v-list-item-title>
-              </v-list-item>
-            </v-list-item-group>
-          </v-list>
-        </v-navigation-drawer>
-        <v-spacer></v-spacer>
-        <v-btn
+                <v-list-item>
+                  <v-list-item-icon>
+                    <v-icon>mdi-account</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-title>Account</v-list-item-title>
+                </v-list-item>
+              </v-list-item-group>
+            </v-list>
+            </v-navigation-drawer>
+          </v-col>
+          <v-col class="d-flex justify-center align-center">
+            <v-btn
             outlined
-            class="mr-3 unselected"
+            class="mx-1 unselected "
             :class="{selected: type === 'day'}"
             @click="setToday"
             :elevation="type === 'day' ? 0 : 3"
         >
           今天
-        </v-btn>
-        <v-btn
-            class="mr-3 unselected"
-            :class="{selected: type ==='week'}"
-            outlined
-            @click="type = 'week'"
-            :elevation="type === 'week' ? 0 : 3"
-        >
-          本周
-        </v-btn>
-        <v-btn
-            class="mr-3 unselected"
-            :class="{selected: type === 'month'}"
-            outlined
-            @click="type = 'month'"
-            :elevation="type === 'month' ? 0 : 3"
-        >
-          本月
-        </v-btn>
-        <v-spacer></v-spacer>
-        <v-responsive  class="d-flex align-center"  max-width="15%">
-          <v-text-field
-              v-model="newSearch"
-              label="搜索"
-              solo
-              @keydown.enter="create"
-          >
-            <template v-slot:append>
-              <v-fade-transition>
-                <v-icon
-                    v-if="newSearch"
-                    @click="Search"
-                >
-                  mdi-magnify
-                </v-icon>
-              </v-fade-transition>
-            </template>
-          </v-text-field>
-        </v-responsive>
+            </v-btn>
+            <v-btn
+                class="mx-1 unselected"
+                :class="{selected: type ==='week'}"
+                outlined
+                @click="type = 'week'"
+                :elevation="type === 'week' ? 0 : 3"
+            >
+              本周
+            </v-btn>
+            <v-btn
+                class="mx-1 unselected"
+                :class="{selected: type === 'month'}"
+                outlined
+                @click="type = 'month'"
+                :elevation="type === 'month' ? 0 : 3"
+            >
+              本月
+            </v-btn>
+          </v-col>
+          <v-col>
+            <v-row>
+              <v-col cols="4"></v-col>
+            <v-col>
+              <v-text-field
+                dense
+                hide-details
+                prepend-inner-icon="mdi-magnify"
+                outlined
+                color="gray"
+                label="搜索"
+                clearable
+                v-model="newSearch"
+                @click:prepend-inner="Search"
+                @keydown.enter="Search"
+              >
+              </v-text-field>
+            </v-col>
+            </v-row>
+
+
+          </v-col>
+        </v-row>
+
+
 
       </v-card-title>
 <!--      内容-->
         <v-row>
 <!--          待办-->
+
           <v-col cols="4" class="pr-0 pt-0">
             <v-sheet class="overflow-hidden">
               <v-tabs
@@ -105,7 +115,7 @@
 
               >
                 <v-tab key="1" style="min-width: 5%">
-                  <v-icon color="orange darken-2">mdi-arrow-up-bold-box-outline</v-icon>
+                    <v-icon color="orange darken-2">mdi-arrow-up-bold-box-outline</v-icon>
                 </v-tab>
                 <v-tab key="2" style="min-width: 5%">
                   <v-icon color="blue darken-2">mdi-heart</v-icon>
@@ -127,23 +137,225 @@
               <v-tabs-items v-model="tab">
                 <v-tab-item key="1">
                   <v-container style="max-width: 500px">
-                    <v-text-field
-                        v-model="newTask"
-                        label="新建待办事项"
-                        solo
-                        @keydown.enter="create"
-                    >
-                      <template v-slot:append>
-                        <v-fade-transition>
-                          <v-icon
-                              v-if="newTask"
-                              @click="create"
+                    <v-card class=" mb-2">
+                       <v-sheet class=" d-flex align-center">
+                          <v-text-field
+                          hide-details=""
+                          outlined
+                          v-model="eventName"
+                          label="新建待办事项"
+                          placeholder="待办事项名称"
+                          @keydown.enter="create"
+                          @click="expandNewEvent"
+                          @blur="blurNewEvent"
                           >
-                            mdi-plus-circle
-                          </v-icon>
-                        </v-fade-transition>
-                      </template>
-                    </v-text-field>
+                            <template v-slot:append>
+                              <v-fab-transition>
+                                <v-icon
+                                    v-if="eventName"
+                                    @click="create"
+                                >
+                                  mdi-plus-circle
+                                </v-icon>
+                              </v-fab-transition>
+                            </template>
+                          </v-text-field>
+                       </v-sheet>
+                       <v-expand-transition>
+                          <div v-show="showNewEvent">
+                            <v-divider></v-divider>
+                            <v-sheet class="mt-1">
+                            <v-expansion-panels accordion focusable multiple v-model="eventExpanValue">
+                              <v-expansion-panel>
+                                  <v-expansion-panel-header>
+                                    备注
+                                    <template v-slot:actions>
+                                      <v-switch
+                                      class="mt-0 pt-0"
+                                      dense
+                                      hide-details
+                                      :value="ifineventExpanValue(0)"
+                                      >
+                                      </v-switch>
+                                    </template>
+                                  </v-expansion-panel-header>
+                                  <v-expansion-panel-content class="pa-2">
+                                    <v-sheet >
+                                      <v-textarea
+                                        dense
+                                        auto-grow
+                                        counter
+                                        outlined
+                                        clearable
+                                        prepend-inner-icon="mdi-comment"
+                                        rows="3"
+                                        name="input-3-4"
+                                        label="备注内容"
+                                        placeholder="不超过50字"
+                                        :value="eventContent"
+                                        :rules="eventContentRules"
+                                      ></v-textarea>
+                                    </v-sheet>
+                                  </v-expansion-panel-content>
+                                </v-expansion-panel>
+                                <v-expansion-panel >
+                                  <v-expansion-panel-header>
+                                    时间日期
+                                    <template v-slot:actions>
+                                      <v-switch
+                                      class="mt-0 pt-0"
+                                      dense
+                                      hide-details
+                                      :value="ifineventExpanValue(1)"
+                                      >
+                                      </v-switch>
+                                    </template>
+                                  </v-expansion-panel-header>
+                                  <v-expansion-panel-content>
+                                    <v-menu
+                                      ref="menu"
+                                      v-model="eventDateMenu"
+                                      :close-on-content-click="false"
+                                      :return-value.sync="eventDates"
+                                      transition="scale-transition"
+                                      offset-y
+                                      min-width="auto"
+                                    >
+                                      <template v-slot:activator="{ on, attrs }">
+                                        <v-combobox
+                                          v-model="eventDates"
+                                          
+                                          multiple
+                                          outlined
+                                          small-chips
+                                          label="选择日期"
+                                          prepend-inner-icon="mdi-calendar"
+                                          readonly
+                                          v-bind="attrs"
+                                          v-on="on"
+                                          @click="eventDateMenu = !eventDateMenu"
+                                        >
+                                      </v-combobox>
+                                      {{ value1 }}
+                                      <el-time-picker
+                                      style="width: 100%"
+                                      is-range
+                                      value-format="HH:mm"
+                                      v-model="value1"
+                                      range-separator="至"
+                                      start-placeholder="开始时间"
+                                      end-placeholder="结束时间"
+                                      placeholder="选择时间范围">
+                                    </el-time-picker>
+                                      </template>
+                                      <v-date-picker
+                                        v-model="eventDates"
+                                        multiple
+                                        no-title
+                                        scrollable
+                                      >
+                                    
+                                        <v-btn
+                                          outlined
+                                          elevation="3"
+                                          color="error darken-2"
+                                          @click="eventDateMenu = false"
+                                        >
+                                          取消
+                                        </v-btn>
+                                        <v-spacer></v-spacer>
+                                        <v-btn
+                                          outlined
+                                          elevation="3"
+                                          color="success darken-2"
+                                          @click="$refs.menu.save(eventDates)"
+                                        >
+                                          确认
+                                        </v-btn>
+                                      </v-date-picker>
+                                    </v-menu>
+                                  </v-expansion-panel-content>
+                                </v-expansion-panel>
+
+                                <v-expansion-panel>
+                                  <v-expansion-panel-header>
+                                    定时重复
+                                    <template v-slot:actions>
+                                      <v-switch
+                                      class="mt-0 pt-0"
+                                      dense
+                                      hide-details
+                                      :value="ifineventExpanValue(2)"
+                                      >
+                                      </v-switch>
+                                    </template>
+                                  </v-expansion-panel-header>
+                                  <v-expansion-panel-content>
+                                    <el-time-picker
+                                      style="width: 100%"
+                                      is-range
+                                      value-format="HH:mm:ss"
+                                      v-model="value1"
+                                      range-separator="至"
+                                      start-placeholder="开始时间"
+                                      end-placeholder="结束时间"
+                                      placeholder="选择时间范围">
+                                    </el-time-picker>
+                                    <!-- <v-row>
+                                      <v-col>
+                                        <v-select
+                                          :items="eventTimeHours"
+                                          label="Outlined style"
+                                          dense
+                                          outlined
+                                        ></v-select>
+                                      </v-col>
+                                      <v-col></v-col>
+                                    </v-row> -->
+                                  </v-expansion-panel-content>
+                                </v-expansion-panel>
+
+                                <v-expansion-panel>
+                                  <v-expansion-panel-header>
+                                    类别标签
+                                    <template v-slot:actions>
+                                      <v-switch
+                                      class="mt-0 pt-0"
+                                      dense
+                                      hide-details
+                                      :value="ifineventExpanValue(3)"
+                                      >
+                                      </v-switch>
+                                    </template>
+                                  </v-expansion-panel-header>
+                                  <v-expansion-panel-content>
+
+                                  </v-expansion-panel-content>
+                                </v-expansion-panel>
+
+                                <v-expansion-panel>
+                                  <v-expansion-panel-header>
+                                    团队
+                                    <template v-slot:actions>
+                                      <v-switch
+                                      class="mt-0 pt-0"
+                                      dense
+                                      hide-details
+                                      :value="ifineventExpanValue(4)"
+                                      >
+                                      </v-switch>
+                                    </template>
+                                  </v-expansion-panel-header>
+                                  <v-expansion-panel-content>
+
+                                  </v-expansion-panel-content>
+                                </v-expansion-panel>
+                            </v-expansion-panels>
+                            </v-sheet>
+                          </div>
+                        </v-expand-transition>
+                    </v-card>
+
 
                     <h2 class="text-h4 success--text pl-4">
                       总计:&nbsp;
@@ -189,22 +401,21 @@
                               v-if="i !== 0"
                               :key="`${i}-divider`"
                           ></v-divider>
-
-                          <v-list-item :key="`${i}-${task.text}`">
-                            <v-list-item-action>
-                              <v-checkbox
-                                  v-model="task.done"
-                                  :color="task.done && 'grey' || 'primary'"
-                              >
-                                <template v-slot:label>
-                                  <div
-                                      :class="task.done && 'grey--text' || 'primary--text'"
-                                      class="ml-4"
-                                      v-text="task.text"
-                                  ></div>
-                                </template>
-                              </v-checkbox>
-                            </v-list-item-action>
+                            <v-list-item :key="`${i}-${task.text}`">
+                              <v-list-item-action>
+                                <v-checkbox
+                                    v-model="task.done"
+                                    :color="task.done && 'grey' || 'primary'"
+                                >
+                                  <template v-slot:label>
+                                    <div
+                                        :class="task.done && 'grey--text' || 'primary--text'"
+                                        class="ml-4"
+                                        v-text="task.text"
+                                    ></div>
+                                  </template>
+                                </v-checkbox>
+                              </v-list-item-action>
 
                             <v-spacer></v-spacer>
 
@@ -223,6 +434,19 @@
                   </v-container>
                 </v-tab-item>
                 <v-tab-item key="2">
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-icon
+                        color="primary"
+                        dark
+                        v-bind="attrs"
+                        v-on="on"
+                      >
+                        mdi-home
+                      </v-icon>
+                    </template>
+                    <span>Tooltip</span>
+                  </v-tooltip>
                 </v-tab-item>
                 <v-tab-item key="3">3</v-tab-item>
                 <v-tab-item key="4">2</v-tab-item>
@@ -333,6 +557,7 @@
 export default {
   data: () => ({
     //标题栏
+
     newSearch: null,
 
     //待办栏
@@ -351,8 +576,15 @@ export default {
         text: '填工时',
       },
     ],
-    newTask: null,
-
+    showNewEvent: false,
+    eventName: null,
+    eventContent: '',
+    eventContentRules: [v => v.length <= 50 || 'Max 50 characters'],
+    eventDateMenu: false,
+    eventDates: [],
+    eventExpanValue: [],
+    eventTimeHours: ['01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24'],
+    value1: ["09:00:00", "20:00:00"],
     //日历栏
     drawer: false,
     group: null,
@@ -392,16 +624,26 @@ export default {
   methods: {
     //标题栏
     Search(){
-
+      alert('search')
     },
     //待办栏
+    expandNewEvent(){
+      this.showNewEvent = true
+    },
+    blurNewEvent(){
+      // this.showNewEvent = false
+    },
+    ifineventExpanValue(v){
+      return this.eventExpanValue.indexOf(v) > -1
+    },
     create () {
       this.tasks.push({
         done: false,
-        text: this.newTask,
+        text: this.eventName,
       })
-      this.newTask = null
+      this.eventName = null
     },
+    click(v){console.log(v)},
     //日历
     viewDay ({ date }) {
       this.focus = date
@@ -509,5 +751,25 @@ export default {
 }
 .selected {
   color: black;
+}
+.addEventCard >>>.v-input__slot{
+margin-bottom: 0px;
+}
+.addEventCard >>>.v-text-field__details{
+margin-bottom: 0px;
+min-height: 0px;
+max-height: 0px;
+}
+/deep/ .v-expansion-panel-content__wrap{
+  padding: 0px 0px;
+}
+/deep/ .v-expansion-panel-content{
+  padding: 8px 8px;
+}
+/deep/ .el-input__inner{
+    border: 2px solid #DCDFE6;
+}
+/deep/ .el-input.is-focus{
+  border-color: rgb(167, 14, 214);
 }
 </style>

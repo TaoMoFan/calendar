@@ -1,12 +1,23 @@
 <template>
   <v-card>
-<v-btn-toggle>
+    <v-card-title>
+      <v-btn>123</v-btn>
+      <v-input
+          prepend-icon="mdi-minus"
+          hide-details="auto"
+          @click:prepend="prependIconCallback"
+        >
+          Default Slot
+        </v-input>
+    </v-card-title>
+    <v-btn-toggle>
   <v-btn @click="change('1')">1</v-btn>
   <v-btn >1</v-btn>
   <v-btn>1</v-btn>
   <v-btn>1</v-btn>
-</v-btn-toggle>
+    </v-btn-toggle>
     <v-sheet v-if="type === '1'" style="background-color: burlywood;height: 100px"></v-sheet>
+    
   </v-card>
 </template>
 
@@ -33,6 +44,9 @@ export default {
   methods: {
     change(type){
       this.type = type
+    },
+    prependIconCallback(){
+      alert('12')
     }
   }
 }
