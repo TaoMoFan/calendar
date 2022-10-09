@@ -118,14 +118,19 @@
                 <v-tab key="1" style="min-width: 5%">
                     <v-icon color="orange darken-2">mdi-arrow-up-bold-box-outline</v-icon>
                 </v-tab>
-                <v-tab key="2" style="min-width: 5%">
-                  <v-icon color="blue darken-2">mdi-heart</v-icon>
-                </v-tab>
                 <v-tab key="3" style="min-width: 5%">
                   <v-icon color="indigo darken-2"> mdi-account-box</v-icon>
                 </v-tab>
                 <v-tab key="4" style="min-width: 5%">
-                  <v-icon color="teal darken-2">mdi-email</v-icon>
+                  <v-badge
+                      :content="emailShenyu"
+                      :value="emailShenyu"
+                      color="green"
+                      overlap
+
+                  >
+                    <v-icon color="teal darken-2">mdi-email</v-icon>
+                  </v-badge>
                 </v-tab>
                 <v-tab key="5" style="min-width: 5%">
                   <v-icon color="deep-purple darken-2">mdi-call-split</v-icon>
@@ -212,91 +217,26 @@
                                     </template>
                                   </v-expansion-panel-header>
                                   <v-expansion-panel-content>
-                                    <v-menu
-                                      ref="menu"
-                                      v-model="eventDateMenu"
-                                      :close-on-content-click="false"
-                                      :return-value.sync="eventForm.eventDates"
-                                      transition="scale-transition"
-                                      offset-y
-                                      min-width="auto"
-                                    >
-                                      <template v-slot:activator="{ on, attrs }">
-                                        <v-combobox
-                                          v-model="eventForm.eventDates"
-                                          dense
-                                          multiple
-                                          outlined
-                                          small-chips
-                                          label="选择日期"
-                                          prepend-inner-icon="mdi-calendar"
-                                          readonly
-                                          v-bind="attrs"
-                                          v-on="on"
-                                          @click="eventDateMenu = !eventDateMenu"
+                                        <el-date-picker
+                                            v-model="eventForm.eventTime"
+                                            type="datetimerange"
+                                            range-separator="至"
+                                            start-placeholder="开始日期"
+                                            end-placeholder="结束日期"
+                                            placeholder="选择时间范围"
+                                            is-range
+                                            value-format="yyyy-MM-dd HH:mm:ss"
+                                            style="width: 100%"
                                         >
-                                      </v-combobox>
-                                      <el-time-picker
-                                      style="width: 100%"
-                                      is-range
-                                      value-format="HH:mm:ss"
-                                      v-model="eventForm.eventTime"
-                                      range-separator="至"
-                                      start-placeholder="开始时间"
-                                      end-placeholder="结束时间"
-                                      placeholder="选择时间范围">
-                                    </el-time-picker>
-                                      </template>
-                                      <v-date-picker
-                                        v-model="eventForm.eventDates"
-                                        multiple
-                                        no-title
-                                        scrollable
-                                      >
-
-                                        <v-btn
-                                          outlined
-                                          elevation="3"
-                                          color="error darken-2"
-                                          @click="eventDateMenu = false"
-                                        >
-                                          取消
-                                        </v-btn>
-                                        <v-spacer></v-spacer>
-                                        <v-btn
-                                          outlined
-                                          elevation="3"
-                                          color="success darken-2"
-                                          @click="$refs.menu.save(eventForm.eventDates)"
-                                        >
-                                          确认
-                                        </v-btn>
-                                      </v-date-picker>
-                                    </v-menu>
-                                  </v-expansion-panel-content>
-                                </v-expansion-panel>
-
-                                <v-expansion-panel>
-                                  <v-expansion-panel-header>
-                                    定时重复
-                                    <template v-slot:actions>
-                                      <v-switch
-                                      class="mt-0 pt-0"
-                                      dense
-                                      hide-details
-                                      :value="ifineventExpanValue(2)"
-                                      >
-                                      </v-switch>
-                                    </template>
-                                  </v-expansion-panel-header>
-                                  <v-expansion-panel-content>
-                                    <v-select
-                                        :items="eventRepeat"
-                                        label="重复规则"
-                                        dense
-                                        outlined
-                                        v-model="eventForm.eventRepeats"
-                                    ></v-select>
+                                        </el-date-picker>
+                                        <v-select
+                                            class="mt-5"
+                                            :items="eventRepeat"
+                                            label="重复规则"
+                                            dense
+                                            outlined
+                                            v-model="eventForm.eventRepeats"
+                                        ></v-select>
                                   </v-expansion-panel-content>
                                 </v-expansion-panel>
 
@@ -308,7 +248,7 @@
                                       class="mt-0 pt-0"
                                       dense
                                       hide-details
-                                      :value="ifineventExpanValue(3)"
+                                      :value="ifineventExpanValue(2)"
                                       >
                                       </v-switch>
                                     </template>
@@ -402,7 +342,7 @@
                                           class="mt-0 pt-0"
                                           dense
                                           hide-details
-                                          :value="ifineventExpanValue(4)"
+                                          :value="ifineventExpanValue(3)"
                                       >
                                       </v-switch>
                                     </template>
@@ -480,7 +420,7 @@
                                       class="mt-0 pt-0"
                                       dense
                                       hide-details
-                                      :value="ifineventExpanValue(5)"
+                                      :value="ifineventExpanValue(4)"
                                       >
                                       </v-switch>
                                     </template>
@@ -516,7 +456,12 @@
                             </v-expansion-panels>
 
                               <v-sheet class="d-flex ma-2 pb-2">
-                                <v-btn outlined elevation="2" color="red darken-2" @click="cancelAdd">取消</v-btn>
+                                <v-btn outlined elevation="2" color="red darken-2" @click="cancelAdd">
+                                  取消
+                                  <v-icon>
+                                    mdi-minus-circle
+                                  </v-icon>
+                                </v-btn>
                                 <v-spacer></v-spacer>
                                 <v-btn :disabled="eventForm.eventName == null || eventForm.eventName == ''" outlined elevation="2" color="teal darken-2" @click="add">
                                   新建
@@ -607,29 +552,270 @@
 
                   </v-container>
                 </v-tab-item>
-                <v-tab-item key="2">
-                  <v-tooltip bottom>
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-icon
-                        color="primary"
-                        dark
-                        v-bind="attrs"
-                        v-on="on"
+                <v-tab-item key="3" class="px-2 py-3">
+                  <strong class="mx-1 indigo--text text--darken-2">
+                    IPMP工时管理
+                  </strong>
+                  <v-divider></v-divider>
+                  <v-row
+                      class="my-1"
+                      align="center"
+                  >
+
+                    <strong class="ml-4 mr-2 error--text text--darken-2">
+                      {{ computertype }}总计: {{ ipmpAll }}
+                    </strong>
+
+                    <v-divider vertical></v-divider>
+
+                    <strong class="mx-2 info--text text--darken-2">
+                      {{ computertype }}剩余: {{ ipmpShenyu }}
+                    </strong>
+
+                    <v-divider vertical></v-divider>
+
+                    <strong class="mx-2 success--text text--darken-2">
+                      {{ computertype }}已完成: {{ ipmpAlready }}
+                    </strong>
+
+                  </v-row>
+
+                  <v-select
+                      :items="ipmpNameList"
+                      label=" 任务集名称"
+                      outlined
+                      hide-details
+                      class="my-3"
+                      dense
+                      v-model="ipmpName"
+                  ></v-select>
+                  <v-select
+                      :items="ipmpUnitList"
+                      label="需求实施单元内容"
+                      v-model="ipmpUnit"
+                      outlined
+                      hide-details
+                      class="my-3"
+                      dense
+                  ></v-select>
+                  <v-textarea
+                      outlined
+                      name="input-7-4"
+                      label="工作内容"
+                      v-model="ipmpWorkContent"
+                      hide-details
+                      class="my-3"
+                      dense
+                  ></v-textarea>
+                  <v-row>
+                    <v-col >
+                      <v-text-field
+                          label="工时"
+                          placeholder="最多8小时"
+                          outlined
+                          v-model="ipmpWorkTime"
+                          hide-details
+                          class="my-3"
+                          dense
+                      ></v-text-field>
+                    </v-col>
+                    <v-col>
+                      <v-select
+                          :items="ipmpWorktypeList"
+                          label="工作类型"
+                          outlined
+                          v-model="ipmpWorktype"
+                          hide-details
+                          class="my-3"
+                          dense
+                      ></v-select>
+                    </v-col>
+                  </v-row>
+                  <v-select
+                      chips
+                      multiple
+                      :items="events.map((item,index)=>{return item.name}).join(',').split(',')"
+                      label="关联待办事项"
+                      v-model="ipmpRelation"
+                      outlined
+                      hide-details
+                      class="my-3"
+
+                  ></v-select>
+                </v-tab-item>
+                <v-tab-item key="4" class="px-2 py-3">
+                  <strong class="mx-1 teal--text text--darken-2">
+                    邮件管理
+                  </strong>
+                  <v-divider></v-divider>
+                  <v-row
+                      class="my-1"
+                      align="center"
+                  >
+                    <strong class="ml-4 mr-2 error--text text--darken-2">
+                      {{ computertype }}总计: {{ emailAll }}
+                    </strong>
+
+                    <v-divider vertical></v-divider>
+
+                    <strong class="mx-2 info--text text--darken-2">
+                      {{ computertype }}未读: {{ emailShenyu }}
+                    </strong>
+
+                    <v-divider vertical></v-divider>
+
+                    <strong class="mx-2 success--text text--darken-2">
+                      {{ computertype }}已读: {{ emailAlready }}
+                    </strong>
+                  </v-row>
+                </v-tab-item>
+                <v-tab-item key="5" class="px-2 py-3">
+                  <strong class="mx-1 purple--text text--darken-3">
+                    团队待办事项
+                  </strong>
+                  <v-divider></v-divider>
+                  <v-row
+                      class="my-1"
+                      align="center"
+                  >
+                    <strong class="ml-4 mr-2 error--text text--darken-2">
+                      {{ computertype }}总计: {{ ipmpAll }}
+                    </strong>
+
+                    <v-divider vertical></v-divider>
+
+                    <strong class="mx-2 info--text text--darken-2">
+                      {{ computertype }}未完成: {{ ipmpShenyu }}
+                    </strong>
+
+                    <v-divider vertical></v-divider>
+
+                    <strong class="mx-2 success--text text--darken-2">
+                      {{ computertype }}已完成: {{ ipmpAlready }}
+                    </strong>
+                  </v-row>
+                </v-tab-item>
+                <v-tab-item key="6" class="px-2 py-3">
+                  <strong class="mx-1 cyan--text text--darken-4">
+                    统计报告
+                  </strong>
+                  <v-divider></v-divider>
+                  <v-row
+                      class="my-1"
+                      align="center"
+                  >
+                    <strong class="ml-4 mr-2 error--text text--darken-2">
+                      今日完成率: 80%
+                    </strong>
+
+                    <v-divider vertical></v-divider>
+
+                    <strong class="mx-2 info--text text--darken-2">
+                      本周完成率: 34%
+                    </strong>
+
+                    <v-divider vertical></v-divider>
+
+                    <strong class="mx-2 success--text text--darken-2">
+                      本月完成率: 22%
+                    </strong>
+                  </v-row>
+                  <v-card
+                      class="mt-4 mx-auto"
+                      max-width="400"
+                  >
+                    <v-sheet
+                        class="v-sheet--offset mx-auto"
+                        color="cyan darken-4"
+                        elevation="2"
+                    >
+                      <v-sparkline
+                          :labels="xlabels"
+                          :value="yvalue"
+                          color="white"
+                          line-width="2"
+                          padding="16"
+                      ></v-sparkline>
+                    </v-sheet>
+
+                    <v-card-text class="pt-2">
+                      <div class="text-h6  mb-2">
+                          {{ computertype }}完成趋势
+                      </div>
+                      <div class="subheading grey--text d-flex">
+                        为自己打分
+                        <v-spacer></v-spacer>
+                        <v-rating
+                            :value="4.5"
+                            color="amber"
+                            dense
+                            half-increments
+                            size="14"
+                        ></v-rating>
+                      </div>
+                      <v-divider class="my-2"></v-divider>
+                      <div class="text-h6  mb-2">
+                        本周小结
+                      </div>
+                      <v-textarea
+                          v-model="chart1"
+                          :rules="rules1"
+                          auto-grow
+                          rows="1"
+                          row-height="15"
+                          counter="100"
+                          label="本周你完成了那些工作？最有成就感的是什么？"
+                      ></v-textarea>
+                      <v-textarea
+                          v-model="chart2"
+                          :rules="rules2"
+                          auto-grow
+                          rows="1"
+                          row-height="15"
+                          counter="100"
+                          label="下周你计划做什么？要完成哪些目标？"
+                      ></v-textarea>
+                      <v-textarea
+                          v-model="chart3"
+                          :rules="rules3"
+                          auto-grow
+                          rows="1"
+                          row-height="15"
+                          counter="100"
+                          label="本周工作你遇到的困难是什么？需要哪些帮助？"
+                      ></v-textarea>
+                      <v-textarea
+                          v-model="chart4"
+                          :rules="rules4"
+                          auto-grow
+                          rows="1"
+                          row-height="15"
+                          counter="100"
+                          label="本周工作中，有什么需要和团队分享的？"
+                      ></v-textarea>
+                    </v-card-text>
+                    <v-card-actions>
+                      <v-spacer></v-spacer>
+                      <v-btn
+                          color="text--darken-4 cyan--text"
+                          @click="reserve"
+                          elevation="1"
                       >
-                        mdi-home
-                      </v-icon>
-                    </template>
-                    <span>Tooltip</span>
-                  </v-tooltip>
+                        <v-icon left>
+                          mdi-pencil
+                        </v-icon>
+                        提交
+                      </v-btn>
+                    </v-card-actions>
+                  </v-card>
+
                 </v-tab-item>
-                <v-tab-item key="3">
-                  工时填报
-                </v-tab-item>
-                <v-tab-item key="4">2</v-tab-item>
-                <v-tab-item key="5">3</v-tab-item>
               </v-tabs-items>
             </v-sheet>
           </v-col>
+
+
+
           <!--          //日历-->
           <v-col class="pl-0 pt-0">
             <v-toolbar
@@ -766,7 +952,6 @@ export default {
     ],
     showNewEvent: false,
     eventContentRules: [v => v.length <= 50 || 'Max 50 characters'],
-    eventDateMenu: false,
     eventExpanValue: [],
     eventRepeat: ['每天','每个工作日','每周今天','每月今天'],
     activator: null,
@@ -800,7 +985,7 @@ export default {
       eventName: null,
       eventContent: '',
       eventDates: [],
-      eventTime: ['09:00:00', '10:00:00'],
+      eventTime: ['', ''],
       eventRepeats: '',
       eventModel: [],
       eventRelationListOKR:[],
@@ -808,7 +993,28 @@ export default {
       eventTeamList: [],
       done: false
     },
+    //ipmp
+    ipmpName: '',
+    ipmpUnit: '',
+    ipmpWorkContent: '',
+    ipmpWorkTime: '',
+    ipmpWorktype: '',
+    ipmpRelation: [],
+    ipmpNameList: ['A系统2022维护任务集','B系统2022维护任务集'],
+    ipmpUnitList: ['xx系统功能开发优化','xx系统日常测试任务','xx系统日常维护任务'],
+    ipmpWorktypeList: ['需求开发','需求优化','需求设计','安全测试','性能测试', '投产准备', '代码评审', '项目管理', '日常工作', '其他工作'],
+    //email
+    //team
+    //chart
 
+    chart1: '',
+    chart2: '',
+    chart3: '',
+    chart4: '',
+    rules1: [v => v.length <= 100 || '超过100字'],
+    rules2: [v => v.length <= 100 || '超过100字'],
+    rules3: [v => v.length <= 100 || '超过100字'],
+    rules4: [v => v.length <= 100 || '超过100字'],
 
     //日历栏
     drawer: false,
@@ -848,7 +1054,67 @@ export default {
       }else {
         return '今天'
       }
-    }
+    },
+    ipmpAll(){
+      if(this.type == 'month'){
+        return 144
+      }else if (this.type == 'week'){
+        return 56
+      }else {
+        return 8
+      }
+    },
+    ipmpShenyu(){
+      return this.ipmpAll - this.ipmpAlready
+    },
+    ipmpAlready(){
+      if(this.type == 'month'){
+        return 16
+      }else if (this.type == 'week'){
+        return 16
+      }else {
+        return 0
+      }
+    },
+    emailAll(){
+      if(this.type == 'month'){
+        return 80
+      }else if (this.type == 'week'){
+        return 30
+      }else {
+        return 10
+      }
+    },
+    emailShenyu(){
+      return this.emailAll - this.emailAlready
+    },
+    emailAlready(){
+      if(this.type == 'month'){
+        return 62
+      }else if (this.type == 'week'){
+        return 18
+      }else {
+        return 0
+      }
+    },
+    xlabels(){
+      if(this.type == 'month'){
+        return ['1', '5', '10', '15', '20', '25', '30']
+      }else if (this.type == 'week'){
+        return ['1', '2', '3', '4', '5', '6', '7']
+      }else {
+        return ['12am', '3am', '6am', '9am', '12pm', '3pm', '6pm', '9pm']
+      }
+    },
+    yvalue(){
+      if(this.type == 'month'){
+        return [100, 82, 55, 43, 22, 9, 0,]
+      }else if (this.type == 'week'){
+        return [70, 65, 62, 32, 22, 3, 0, 0,]
+      }else {
+        return [10, 10, 10, 10, 7, 4, 0, 0,]
+      }
+    },
   },
   watch:{
     'eventForm.eventModel' (val, prev) {
@@ -880,22 +1146,15 @@ export default {
     },
     //待办栏
     add(){
-      if(this.eventForm.eventDates.length < 1){
-        this.eventForm.eventDates.push("2022-10-10")
-      }
-      let events = []
-      this.eventForm.eventDates.map((v)=>{
-        let  event = {}
-        event.name = this.eventForm.eventName
-        event.start = v + ' ' + this.eventForm.eventTime[0]
-        event.end = v + ' ' + this.eventForm.eventTime[1]
-        event.color = this.colors[this.rnd(0, this.colors.length - 1)]
-        event.timed = true
-        events.push(event)
-      })
+      let  event = {}
+      event.name = this.eventForm.eventName
+      event.start = this.eventForm.eventTime[0]
+      event.end = this.eventForm.eventTime[1]
+      event.color = this.colors[this.rnd(0, this.colors.length - 1)]
+      event.timed = true
       console.log(this.eventForm)
-      console.log(this.eventForm.eventDates[0] + ' ' + this.eventForm.eventTime[0])
-      this.events = this.events.concat(events)
+      console.log(this.eventForm.eventTime)
+      this.events.push(event)
       console.log(this.events)
     },
     cancelAdd(){
@@ -927,6 +1186,9 @@ export default {
       return text.toString()
           .toLowerCase()
           .indexOf(query.toString().toLowerCase()) > -1
+    },
+    reserve(){
+
     },
     //日历
     viewDay ({ date }) {
