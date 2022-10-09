@@ -4,47 +4,46 @@
 <!--      标题栏-->
       <v-card-title class="px-1">
         <v-row>
-          <v-col class="d-flex align-center">          
-            <v-btn
-              @click="drawer = true"
-              outlined
-              elevation="1"
-              icon>
-            <v-icon dark>
-              mdi-account-circle
-            </v-icon>
-            </v-btn>
+          <v-col class="d-flex align-center">
+            <v-avatar @click="drawer = true">
+              <v-img
+                  src="~@/assets/avataaars.svg"
+              ></v-img>
+            </v-avatar>
+            <div class="text-h5 ml-5">小浦
+              <span class="orange--text text--darken-2">T</span><span class="indigo--text text--darken-2">o</span><span class="teal--text text--darken-2">D</span><span class="cyan--text text--darken-2">o</span>
+            </div>
 <!--          左侧弹窗遮罩-->
-            <v-navigation-drawer
-              v-model="drawer"
-              absolute
-              temporary
-              width="20%"
-          >
-            <v-list
-                nav
-                dense
-            >
-              <v-list-item-group
-                  v-model="group"
-                  active-class="deep-purple--text text--accent-4"
-              >
-                <v-list-item>
-                  <v-list-item-icon>
-                    <v-icon>mdi-home</v-icon>
-                  </v-list-item-icon>
-                  <v-list-item-title>Home</v-list-item-title>
-                </v-list-item>
+<!--            <v-navigation-drawer-->
+<!--              v-model="drawer"-->
+<!--              absolute-->
+<!--              temporary-->
+<!--              width="20%"-->
+<!--          >-->
+<!--            <v-list-->
+<!--                nav-->
+<!--                dense-->
+<!--            >-->
+<!--              <v-list-item-group-->
+<!--                  v-model="group"-->
+<!--                  active-class="deep-purple&#45;&#45;text text&#45;&#45;accent-4"-->
+<!--              >-->
+<!--                <v-list-item>-->
+<!--                  <v-list-item-icon>-->
+<!--                    <v-icon>mdi-home</v-icon>-->
+<!--                  </v-list-item-icon>-->
+<!--                  <v-list-item-title>Home</v-list-item-title>-->
+<!--                </v-list-item>-->
 
-                <v-list-item>
-                  <v-list-item-icon>
-                    <v-icon>mdi-account</v-icon>
-                  </v-list-item-icon>
-                  <v-list-item-title>Account</v-list-item-title>
-                </v-list-item>
-              </v-list-item-group>
-            </v-list>
-            </v-navigation-drawer>
+<!--                <v-list-item>-->
+<!--                  <v-list-item-icon>-->
+<!--                    <v-icon>mdi-account</v-icon>-->
+<!--                  </v-list-item-icon>-->
+<!--                  <v-list-item-title>Account</v-list-item-title>-->
+<!--                </v-list-item>-->
+<!--              </v-list-item-group>-->
+<!--            </v-list>-->
+<!--            </v-navigation-drawer>-->
           </v-col>
           <v-col class="d-flex justify-center align-center">
             <v-btn
@@ -107,7 +106,7 @@
         <v-row>
 <!--          待办-->
 
-          <v-col cols="4" class="pr-0 pt-0">
+          <v-col cols="3" class="pr-0 pt-0">
             <v-sheet class="overflow-hidden">
               <v-tabs
                   fixed-tabs
@@ -116,7 +115,7 @@
 
               >
                 <v-tab key="1" style="min-width: 5%">
-                    <v-icon color="orange darken-2">mdi-arrow-up-bold-box-outline</v-icon>
+                    <v-icon color="orange darken-2">mdi-plus-box</v-icon>
                 </v-tab>
                 <v-tab key="3" style="min-width: 5%">
                   <v-icon color="indigo darken-2"> mdi-account-box</v-icon>
@@ -133,7 +132,7 @@
                   </v-badge>
                 </v-tab>
                 <v-tab key="5" style="min-width: 5%">
-                  <v-icon color="deep-purple darken-2">mdi-call-split</v-icon>
+                  <v-icon color="deep-purple darken-2">mdi-sitemap</v-icon>
                 </v-tab>
                 <v-tab key="6" style="min-width: 5%">
                 <v-icon color="cyan darken-2">mdi-dialpad</v-icon>
@@ -153,16 +152,6 @@
                           placeholder="待办事项名称"
                           @click="expandNewEvent"
                           >
-<!--                            <template v-slot:append>-->
-<!--                              <v-fab-transition>-->
-<!--                                <v-icon-->
-<!--                                    v-if="eventForm.eventName"-->
-<!--                                    @click="create"-->
-<!--                                >-->
-<!--                                  mdi-plus-circle-->
-<!--                                </v-icon>-->
-<!--                              </v-fab-transition>-->
-<!--                            </template>-->
                           </v-text-field>
                        </v-sheet>
                        <v-expand-transition>
@@ -179,6 +168,7 @@
                                       dense
                                       hide-details
                                       :value="ifineventExpanValue(0)"
+                                      color="orange darken-2"
                                       >
                                       </v-switch>
                                     </template>
@@ -212,6 +202,7 @@
                                       dense
                                       hide-details
                                       :value="ifineventExpanValue(1)"
+                                      color="indigo darken-2"
                                       >
                                       </v-switch>
                                     </template>
@@ -249,6 +240,8 @@
                                       dense
                                       hide-details
                                       :value="ifineventExpanValue(2)"
+                                      color="teal darken-2"
+
                                       >
                                       </v-switch>
                                     </template>
@@ -338,7 +331,7 @@
                                     关联
                                     <template v-slot:actions>
                                       <v-switch
-                                          color="red darken-2"
+                                          color="deep-purple darken-2"
                                           class="mt-0 pt-0"
                                           dense
                                           hide-details
@@ -421,6 +414,7 @@
                                       dense
                                       hide-details
                                       :value="ifineventExpanValue(4)"
+                                      color="cyan darken-2"
                                       >
                                       </v-switch>
                                     </template>
@@ -640,8 +634,19 @@
                       outlined
                       hide-details
                       class="my-3"
-
                   ></v-select>
+                  <v-spacer></v-spacer>
+                  <v-btn
+                        color="text--darken-4 indigo--text"
+                        @click="reserve"
+                        elevation="1"
+                    >
+                      <v-icon left>
+                        mdi-pencil
+                      </v-icon>
+                      提交
+                    </v-btn>
+
                 </v-tab-item>
                 <v-tab-item key="4" class="px-2 py-3">
                   <strong class="mx-1 teal--text text--darken-2">
@@ -694,6 +699,129 @@
                       {{ computertype }}已完成: {{ ipmpAlready }}
                     </strong>
                   </v-row>
+                  <v-timeline
+                      align-top
+                      dense
+                  >
+                    <v-timeline-item
+                        color="green"
+                        small
+                    >
+                      <v-row class="pt-1">
+                        <v-col cols="3">
+                          <strong>09：15</strong>
+                        </v-col>
+                        <v-col>
+                          <strong>团队站会</strong>
+                          <div class="text-caption">
+                            站会具体涉及内容
+                          </div>
+                        </v-col>
+                      </v-row>
+                    </v-timeline-item>
+
+                    <v-timeline-item
+                        color="cyan darken-2"
+                        small
+                    >
+                      <v-row class="pt-1">
+                        <v-col cols="3">
+                          <strong>3-4pm</strong>
+                        </v-col>
+                        <v-col>
+                          <strong>代码评审</strong>
+                          <div class="text-caption mb-2">
+                            XX系统需求代码评审
+                          </div>
+                          <div class="text-caption mb-2">
+                            参与者
+                          </div>
+                          <v-avatar>
+                            <v-img
+                                src="~@/assets/avataaars2.png"
+                            ></v-img>
+                          </v-avatar>
+                          <v-avatar>
+                            <v-img
+                                src="~@/assets/avataaars1.png"
+                            ></v-img>
+                          </v-avatar>
+                          <v-avatar>
+                            <v-img
+                                src="~@/assets/avataaars3.png"
+                            ></v-img>
+                          </v-avatar>
+                        </v-col>
+                      </v-row>
+                    </v-timeline-item>
+
+                    <v-timeline-item
+                        color="red"
+                        small
+                    >
+                      <v-row class="pt-1">
+                        <v-col cols="3">
+                          <strong>31日晚</strong>
+                        </v-col>
+                        <v-col>
+                          <strong>日常变更</strong>
+                        </v-col>
+                      </v-row>
+                    </v-timeline-item>
+
+                    <v-timeline-item
+                        color="teal lighten-3"
+                        small
+                    >
+                      <v-row class="pt-1">
+                        <v-col cols="3">
+                          <strong>7日9点</strong>
+                        </v-col>
+                        <v-col>
+                          <strong>团建</strong>
+                          <div class="text-caption">
+                            参与者
+                          </div>
+                          <v-avatar>
+                            <v-img
+                                src="~@/assets/avataaars2.png"
+                            ></v-img>
+                          </v-avatar>
+                          <v-avatar>
+                            <v-img
+                                src="~@/assets/avataaars3.png"
+                            ></v-img>
+                          </v-avatar>
+                          <v-avatar>
+                            <v-img
+                                src="~@/assets/avataaars.png"
+                            ></v-img>
+                          </v-avatar>
+                          <v-avatar>
+                            <v-img
+                                src="~@/assets/avataaars1.png"
+                            ></v-img>
+                          </v-avatar>
+                        </v-col>
+                      </v-row>
+                    </v-timeline-item>
+                    <v-timeline-item
+                        color="teal lighten-3"
+                        small
+                    >
+                      <v-row class="pt-1">
+                        <v-col cols="3">
+                          <strong>XXX</strong>
+                        </v-col>
+                        <v-col>
+                          <strong>XX</strong>
+                          <div class="text-caption">
+                            xxx
+                          </div>
+                        </v-col>
+                      </v-row>
+                    </v-timeline-item>
+                  </v-timeline>
                 </v-tab-item>
                 <v-tab-item key="6" class="px-2 py-3">
                   <strong class="mx-1 cyan--text text--darken-4">
@@ -722,7 +850,7 @@
                   </v-row>
                   <v-card
                       class="mt-4 mx-auto"
-                      max-width="400"
+
                   >
                     <v-sheet
                         class="v-sheet--offset mx-auto"
@@ -808,7 +936,6 @@
                       </v-btn>
                     </v-card-actions>
                   </v-card>
-
                 </v-tab-item>
               </v-tabs-items>
             </v-sheet>
