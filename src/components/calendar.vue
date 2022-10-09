@@ -94,8 +94,6 @@
               </v-text-field>
             </v-col>
             </v-row>
-
-
           </v-col>
         </v-row>
 
@@ -499,50 +497,52 @@
                       ></v-progress-circular>
                     </v-row>
                     <v-divider class="mb-4"></v-divider>
-                    <v-card v-if="events.length > 0">
-                      <v-slide-y-transition
-                          class="py-0"
-                          group
-                      >
-                        <template  v-for="(event, i) in events">
-                          <v-divider
-                              v-if="i !== 0"
-                              :key="`${i}-divider`"
-                          ></v-divider>
-                            <v-list-item :key="`${i}-${event.name}`">
-                              <v-list-item-action>
-                                <v-checkbox
-                                    v-model="event.done"
-                                    :color="event.done && 'grey' || 'primary'"
-                                >
-                                  <template v-slot:label>
-                                    <div
-                                        :class="event.done && 'grey--text' || 'primary--text'"
-                                        class="ml-2"
-                                        v-text="event.name"
-                                    ></div>
-                                    <v-spacer></v-spacer>
-                                    <div :class="event.done && 'grey--text' || 'primary--text'"
-                                         class="ml-2"
-                                         v-text="event.start">
-                                    </div>
-                                  </template>
-                                </v-checkbox>
-                              </v-list-item-action>
-                            <v-spacer></v-spacer>
-                            <v-scroll-x-transition>
-                              <v-icon
-                                  v-if="event.done"
-                                  color="success"
-                              >
-                                mdi-check
-                              </v-icon>
-                            </v-scroll-x-transition>
-
-                          </v-list-item>
-                        </template>
-                      </v-slide-y-transition>
-                    </v-card>
+                    <v-sheet v-if="events.length > 0">
+                      <strong class="mx-1 cyan--text text--darken-4">
+                        已超期
+                      </strong>
+<!--                      <v-slide-y-transition-->
+<!--                          class="py-0"-->
+<!--                          group-->
+<!--                      >-->
+<!--                        <template  v-for="(event, i) in events">-->
+<!--                          <v-divider-->
+<!--                              v-if="i !== 0"-->
+<!--                              :key="`${i}-divider`"-->
+<!--                          ></v-divider>-->
+<!--                            <v-list-item :key="`${i}-${event.name}`">-->
+<!--                              <v-list-item-action>-->
+<!--                                <v-checkbox-->
+<!--                                    v-model="event.done"-->
+<!--                                    :color="event.done && 'grey' || 'primary'"-->
+<!--                                >-->
+<!--                                  <template v-slot:label>-->
+<!--                                    <div-->
+<!--                                        :class="event.done && 'grey&#45;&#45;text' || 'primary&#45;&#45;text'"-->
+<!--                                        class="ml-2"-->
+<!--                                        v-text="event.name"-->
+<!--                                    ></div>-->
+<!--                                    <v-spacer></v-spacer>-->
+<!--                                    <div :class="event.done && 'grey&#45;&#45;text' || 'primary&#45;&#45;text'"-->
+<!--                                         class="ml-2"-->
+<!--                                         v-text="event.start">-->
+<!--                                    </div>-->
+<!--                                  </template>-->
+<!--                                </v-checkbox>-->
+<!--                              </v-list-item-action>-->
+<!--                            <v-spacer></v-spacer>-->
+<!--                            <v-scroll-x-transition>-->
+<!--                              <v-icon-->
+<!--                                  v-if="event.done"-->
+<!--                                  color="success"-->
+<!--                              >-->
+<!--                                mdi-check-->
+<!--                              </v-icon>-->
+<!--                            </v-scroll-x-transition>-->
+<!--                          </v-list-item>-->
+<!--                        </template>-->
+<!--                      </v-slide-y-transition>-->
+                    </v-sheet>
 
                   </v-container>
                 </v-tab-item>
@@ -571,7 +571,6 @@
                     <strong class="mx-2 success--text text--darken-2">
                       {{ computertype }}已完成: {{ ipmpAlready }}
                     </strong>
-
                   </v-row>
 
                   <v-select
@@ -664,7 +663,7 @@
                     <v-divider vertical></v-divider>
 
                     <strong class="mx-2 info--text text--darken-2">
-                      {{ computertype }}未读: {{ emailShenyu }}
+                      未读邮件: {{ emailShenyu }}
                     </strong>
 
                     <v-divider vertical></v-divider>
@@ -863,6 +862,7 @@
                           color="white"
                           line-width="2"
                           padding="16"
+                          auto-draw-duration="1500"
                       ></v-sparkline>
                     </v-sheet>
 
@@ -975,7 +975,7 @@
               </v-toolbar-title>
               <v-spacer></v-spacer>
             </v-toolbar>
-            <v-sheet height="800px">
+            <v-sheet height="815px">
               <v-calendar
                   ref="calendar"
                   v-model="focus"
@@ -996,30 +996,34 @@
                   :close-on-content-click="false"
                   :activator="selectedElement"
                   offset-x
+                  max-width="40vw"
+                  min-width="20vw"
               >
                 <v-card
                     color="grey lighten-4"
+                    max-width="40vw"
                     min-width="20vw"
+
                     flat
                 >
                   <v-toolbar
+                      dense
                       :color="selectedEvent.color"
-                      dark
+                      elevation="1"
                   >
-                    <v-btn icon>
-                      <v-icon>mdi-pencil</v-icon>
-                    </v-btn>
-                    <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
+                    <v-toolbar-title class="white--text text-h5" v-html="selectedEvent.name"></v-toolbar-title>
                     <v-spacer></v-spacer>
-                    <v-btn icon>
-                      <v-icon>mdi-heart</v-icon>
-                    </v-btn>
-                    <v-btn icon>
-                      <v-icon>mdi-dots-vertical</v-icon>
-                    </v-btn>
+
                   </v-toolbar>
                   <v-card-text>
-                    <span v-html="selectedEvent.details"></span>
+                    <v-row>
+                      <v-col class="mx-2 pa-1 dark--text" >{{ selectedEvent.start }}</v-col>
+                      <v-divider vertical></v-divider>
+                      <v-col class="mx-2 pa-1 dark--text" >{{ selectedEvent.end }}</v-col>
+                    </v-row>
+                    <v-divider class="mt-4"></v-divider>
+
+                    <span class="black--text" v-html="selectedEvent.content"></span>
                   </v-card-text>
                   <v-card-actions>
                     <v-btn
@@ -1200,7 +1204,7 @@ export default {
       }else if (this.type == 'week'){
         return 16
       }else {
-        return 0
+        return 4
       }
     },
     emailAll(){
@@ -1217,11 +1221,11 @@ export default {
     },
     emailAlready(){
       if(this.type == 'month'){
-        return 62
+        return 72
       }else if (this.type == 'week'){
-        return 18
+        return 22
       }else {
-        return 0
+        return 2
       }
     },
     xlabels(){
@@ -1279,6 +1283,14 @@ export default {
       event.end = this.eventForm.eventTime[1]
       event.color = this.colors[this.rnd(0, this.colors.length - 1)]
       event.timed = true
+      event.content = this.eventForm.eventContent
+      event.eventId = this.eventForm.eventId
+      event.eventRepeats = this.eventForm.eventRepeats
+      event.eventModel = this.eventForm.eventModel
+      event.eventRelationListOKR = this.eventForm.eventRelationListOKR
+      event.eventRelationListIPMP = this.eventForm.eventRelationListIPMP
+      event.eventTeamList = this.eventForm.eventTeamList
+      event.done = this.eventForm.done
       console.log(this.eventForm)
       console.log(this.eventForm.eventTime)
       this.events.push(event)
