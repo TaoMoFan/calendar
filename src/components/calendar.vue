@@ -105,12 +105,11 @@
 <!--          待办-->
 
           <v-col cols="3" class="pr-0 pt-0">
-            <v-sheet class="overflow-hidden">
+            <v-sheet>
               <v-tabs
                   fixed-tabs
                   v-model="tab"
                   color="green"
-
               >
                 <v-tab key="1" style="min-width: 5%">
                     <v-icon color="orange darken-2">mdi-plus-box</v-icon>
@@ -139,7 +138,7 @@
 
               <v-tabs-items v-model="tab">
                 <v-tab-item key="1">
-                  <v-container >
+                  <v-container style="overflow-y:scroll;overflow-x:hidden;height:820px">
                     <v-card class=" mb-2">
                        <v-sheet class=" d-flex align-center">
                           <v-text-field
@@ -498,54 +497,96 @@
                     </v-row>
                     <v-divider class="mb-4"></v-divider>
                     <v-sheet v-if="events.length > 0">
-                      <strong class="mx-1 cyan--text text--darken-4">
+
+                      <el-timeline :reverse="false" >
+                        <el-timeline-item
+                            v-for="(e, index) in events"
+                            :key="index"
+                            :timestamp="e.start"
+                            placement="top"
+                        >
+                          <v-slide-y-transition
+                              class="py-0"
+                              group
+                          >
+                            <v-card :key="index" class="cardClass">
+                              <v-card-actions>
+                                <v-checkbox
+                                    v-model="e.done"
+                                    :color="e.done && 'grey' || 'primary'"
+                                    dense
+                                >
+                                  <template v-slot:label>
+                                    <div
+                                        :class="e.done && 'grey--text' || 'primary--text'"
+                                        class="ml-2"
+                                        v-text="e.name"
+                                    ></div>
+                                  </template>
+                                </v-checkbox>
+
+                              <v-spacer></v-spacer>
+                              <v-scroll-x-transition>
+                                <v-icon
+                                    v-if="e.done"
+                                    color="success"
+                                >
+                                  mdi-check
+                                </v-icon>
+                              </v-scroll-x-transition>
+                              </v-card-actions>
+                            </v-card>
+                          </v-slide-y-transition>
+                        </el-timeline-item>
+                      </el-timeline>
+                      <strong class="ma-1 red--text text--darken-4">
                         已超期
                       </strong>
-<!--                      <v-slide-y-transition-->
-<!--                          class="py-0"-->
-<!--                          group-->
-<!--                      >-->
-<!--                        <template  v-for="(event, i) in events">-->
-<!--                          <v-divider-->
-<!--                              v-if="i !== 0"-->
-<!--                              :key="`${i}-divider`"-->
-<!--                          ></v-divider>-->
-<!--                            <v-list-item :key="`${i}-${event.name}`">-->
-<!--                              <v-list-item-action>-->
-<!--                                <v-checkbox-->
-<!--                                    v-model="event.done"-->
-<!--                                    :color="event.done && 'grey' || 'primary'"-->
-<!--                                >-->
-<!--                                  <template v-slot:label>-->
-<!--                                    <div-->
-<!--                                        :class="event.done && 'grey&#45;&#45;text' || 'primary&#45;&#45;text'"-->
-<!--                                        class="ml-2"-->
-<!--                                        v-text="event.name"-->
-<!--                                    ></div>-->
-<!--                                    <v-spacer></v-spacer>-->
-<!--                                    <div :class="event.done && 'grey&#45;&#45;text' || 'primary&#45;&#45;text'"-->
-<!--                                         class="ml-2"-->
-<!--                                         v-text="event.start">-->
-<!--                                    </div>-->
-<!--                                  </template>-->
-<!--                                </v-checkbox>-->
-<!--                              </v-list-item-action>-->
-<!--                            <v-spacer></v-spacer>-->
-<!--                            <v-scroll-x-transition>-->
-<!--                              <v-icon-->
-<!--                                  v-if="event.done"-->
-<!--                                  color="success"-->
-<!--                              >-->
-<!--                                mdi-check-->
-<!--                              </v-icon>-->
-<!--                            </v-scroll-x-transition>-->
-<!--                          </v-list-item>-->
-<!--                        </template>-->
-<!--                      </v-slide-y-transition>-->
-                    </v-sheet>
+                      <el-timeline :reverse="false" >
+                        <el-timeline-item
+                            v-for="(e, index) in fakeevents"
+                            :key="index"
+                            :timestamp="e.start"
+                            placement="top"
+                        >
+                          <v-slide-y-transition
+                              class="py-0"
+                              group
+                          >
+                            <v-card :key="index" class="cardClass">
+                              <v-card-actions>
+                                <v-checkbox
+                                    v-model="e.done"
+                                    :color="e.done && 'grey' || 'primary'"
+                                    dense
+                                >
+                                  <template v-slot:label>
+                                    <div
+                                        :class="e.done && 'grey--text' || 'red--text'"
+                                        class="ml-2"
+                                        v-text="e.name"
+                                    ></div>
+                                  </template>
+                                </v-checkbox>
 
+                                <v-spacer></v-spacer>
+                                <v-scroll-x-transition>
+                                  <v-icon
+                                      v-if="e.done"
+                                      color="success"
+                                  >
+                                    mdi-check
+                                  </v-icon>
+                                </v-scroll-x-transition>
+                              </v-card-actions>
+                            </v-card>
+                          </v-slide-y-transition>
+                        </el-timeline-item>
+                      </el-timeline>
+                    </v-sheet>
                   </v-container>
                 </v-tab-item>
+
                 <v-tab-item key="3" class="px-2 py-3">
                   <strong class="mx-1 indigo--text text--darken-2">
                     IPMP工时管理
@@ -862,7 +903,6 @@
                           color="white"
                           line-width="2"
                           padding="16"
-                          auto-draw-duration="1500"
                       ></v-sparkline>
                     </v-sheet>
 
@@ -1031,7 +1071,7 @@
                         color="secondary"
                         @click="selectedOpen = false"
                     >
-                      Cancel
+                      取消
                     </v-btn>
                   </v-card-actions>
                 </v-card>
@@ -1080,6 +1120,24 @@ export default {
         color: 'blue',
         timed: true
       },
+    ],
+    fakeevents: [
+      {
+        done: false,
+        name: '超期待办1',
+        start: '2022-09-11 15:00:00',
+        end: '2022-09-09 17:00:00',
+        color: 'red',
+        timed: true
+      },
+      {
+        done: false,
+        name: '超期待办2',
+        start: '2022-09-14 09:00:00',
+        end: '2022-09-14 17:00:00',
+        color: 'red',
+        timed: true
+      }
     ],
     showNewEvent: false,
     eventContentRules: [v => v.length <= 50 || 'Max 50 characters'],
@@ -1279,6 +1337,12 @@ export default {
     add(){
       let  event = {}
       event.name = this.eventForm.eventName
+      if(this.eventForm.eventTime[0] == ''){
+        this.eventForm.eventTime[0] = '2022-10-10 08:00:00'
+      }
+      if(this.eventForm.eventTime[1] == ''){
+        this.eventForm.eventTime[1] = '2022-10-10 09:00:00'
+      }
       event.start = this.eventForm.eventTime[0]
       event.end = this.eventForm.eventTime[1]
       event.color = this.colors[this.rnd(0, this.colors.length - 1)]
@@ -1455,5 +1519,11 @@ max-height: 0px;
 }
 /deep/ .el-input.is-focus{
   border-color: rgb(167, 14, 214);
+}
+/deep/ .el-timeline {
+  padding-left: 0px;
+}
+/deep/.cardClass .v-messages{
+  min-height: 0px;
 }
 </style>

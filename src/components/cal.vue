@@ -1,124 +1,140 @@
 <template>
-  <v-app>
-    <v-sheet
-        tile
-        height="54"
-        class="d-flex"
+  <v-container >
+    <v-text-field
+        v-model="newTask"
+        label="What are you working on?"
+        solo
+        @keydown.enter="create"
     >
-      <v-btn
-          icon
-          class="ma-2"
-          @click="$refs.calendar.prev()"
-      >
-        <v-icon>mdi-chevron-left</v-icon>
-      </v-btn>
-      <v-select
-          v-model="type"
-          :items="types"
-          dense
-          outlined
-          hide-details
-          class="ma-2"
-          label="type"
-      ></v-select>
-      <v-select
-          v-model="mode"
-          :items="modes"
-          dense
-          outlined
-          hide-details
-          label="event-overlap-mode"
-          class="ma-2"
-      ></v-select>
-      <v-select
-          v-model="weekday"
-          :items="weekdays"
-          dense
-          outlined
-          hide-details
-          label="weekdays"
-          class="ma-2"
-      ></v-select>
+      <template v-slot:append>
+        <v-fade-transition>
+          <v-icon
+              v-if="newTask"
+              @click="create"
+          >
+            mdi-plus-circle
+          </v-icon>
+        </v-fade-transition>
+      </template>
+    </v-text-field>
+
+    <h2 class="text-h4 success--text pl-4">
+      Tasks:&nbsp;
+      <v-fade-transition leave-absolute>
+        <span :key="`tasks-${tasks.length}`">
+          {{ tasks.length }}
+        </span>
+      </v-fade-transition>
+    </h2>
+
+    <v-divider class="mt-4"></v-divider>
+
+    <v-row
+        class="my-1"
+        align="center"
+    >
+      <strong class="mx-4 info--text text--darken-2">
+        Remaining: {{ remainingTasks }}
+      </strong>
+
+      <v-divider vertical></v-divider>
+
+      <strong class="mx-4 success--text text--darken-2">
+        Completed: {{ completedTasks }}
+      </strong>
+
       <v-spacer></v-spacer>
-      <v-btn
-          icon
-          class="ma-2"
-          @click="$refs.calendar.next()"
+
+      <v-progress-circular
+          :value="progress"
+          class="mr-2"
+      ></v-progress-circular>
+    </v-row>
+
+    <v-divider class="mb-4"></v-divider>
+
+    <v-card v-if="tasks.length > 0" style="overflow-y:scroll;overflow-x:hidden;height:500px">
+      <v-slide-y-transition
+          class="py-0"
+          group
+          tag="v-list"
       >
-        <v-icon>mdi-chevron-right</v-icon>
-      </v-btn>
-    </v-sheet>
-    <v-sheet height="600">
-      <v-calendar
-          ref="calendar"
-          v-model="value"
-          :weekdays="weekday"
-          :type="type"
-          :events="events"
-          :event-overlap-mode="mode"
-          :event-overlap-threshold="30"
-          :event-color="getEventColor"
-          @change="getEvents"
-      ></v-calendar>
-    </v-sheet>
-  </v-app>
+        <template v-for="(task, i) in tasks">
+          <v-divider
+              v-if="i !== 0"
+              :key="`${i}-divider`"
+          ></v-divider>
+
+          <v-list-item :key="`${i}-${task.text}`">
+            <v-list-item-action>
+              <v-checkbox
+                  v-model="task.done"
+                  :color="task.done && 'grey' || 'primary'"
+              >
+                <template v-slot:label>
+                  <div
+                      :class="task.done && 'grey--text' || 'primary--text'"
+                      class="ml-4"
+                      v-text="task.text"
+                  ></div>
+                </template>
+              </v-checkbox>
+            </v-list-item-action>
+
+            <v-spacer></v-spacer>
+
+            <v-scroll-x-transition>
+              <v-icon
+                  v-if="task.done"
+                  color="success"
+              >
+                mdi-check
+              </v-icon>
+            </v-scroll-x-transition>
+          </v-list-item>
+        </template>
+      </v-slide-y-transition>
+    </v-card>
+  </v-container>
 </template>
 
 <script>
 export default {
-  name: "calendar",
   data: () => ({
-    type: 'month',
-    types: ['month', 'week', 'day', '4day'],
-    mode: 'stack',
-    modes: ['stack', 'column'],
-    weekday: [0, 1, 2, 3, 4, 5, 6],
-    weekdays: [
-      { text: 'Sun - Sat', value: [0, 1, 2, 3, 4, 5, 6] },
-      { text: 'Mon - Sun', value: [1, 2, 3, 4, 5, 6, 0] },
-      { text: 'Mon - Fri', value: [1, 2, 3, 4, 5] },
-      { text: 'Mon, Wed, Fri', value: [1, 3, 5] },
+    tasks: [
+      {
+        done: false,
+        text: 'Foobar',
+      },
+      {
+        done: false,
+        text: 'Fizzbuzz',
+      },
     ],
-    value: '',
-    events: [],
-    colors: ['blue', 'indigo', 'deep-purple', 'cyan', 'green', 'orange', 'grey darken-1'],
-    names: ['Meeting', 'Holiday', 'PTO', 'Travel', 'Event', 'Birthday', 'Conference', 'Party'],
+    newTask: null,
   }),
+
+  computed: {
+    completedTasks () {
+      return this.tasks.filter(task => task.done).length
+    },
+    progress () {
+      return this.completedTasks / this.tasks.length * 100
+    },
+    remainingTasks () {
+      return this.tasks.length - this.completedTasks
+    },
+  },
+
   methods: {
-    getEvents ({ start, end }) {
-      const events = []
+    create () {
+      this.tasks.push({
+        done: false,
+        text: this.newTask,
+      })
 
-      const min = new Date(`${start.date}T00:00:00`)
-      const max = new Date(`${end.date}T23:59:59`)
-      const days = (max.getTime() - min.getTime()) / 86400000
-      const eventCount = this.rnd(days, days + 20)
-
-      for (let i = 0; i < eventCount; i++) {
-        const allDay = this.rnd(0, 3) === 0
-        const firstTimestamp = this.rnd(min.getTime(), max.getTime())
-        const first = new Date(firstTimestamp - (firstTimestamp % 900000))
-        const secondTimestamp = this.rnd(2, allDay ? 288 : 8) * 900000
-        const second = new Date(first.getTime() + secondTimestamp)
-
-        events.push({
-          name: this.names[this.rnd(0, this.names.length - 1)],
-          start: this.formatDate(first),
-          end: this.formatDate(second),
-          color: this.colors[this.rnd(0, this.colors.length - 1)],
-          timed: !allDay,
-        })
-      }
-      this.events = events
+      this.newTask = null
     },
-    getEventColor (event) {
-      return event.color
-    },
-    rnd (a, b) {
-      return Math.floor((b - a + 1) * Math.random()) + a
-    },
-    formatDate(date){
-      return date.getFullYear()+ '-' + (date.getMonth()+1) + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes();
-    }
   },
 }
 </script>
